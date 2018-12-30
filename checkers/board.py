@@ -11,7 +11,7 @@ class Board(CheckersInterface):
     white_pawns = []
     black_pawns = []
 
-    def __init__(self, state:State = None):
+    def __init__(self, state: State = None):
         if state is None:
             self.initial_state()
         else:
@@ -19,15 +19,15 @@ class Board(CheckersInterface):
             self.black_pawns = state.black_pawns
 
     def initial_state(self):
-        gen_black_places = self.make_places_gen(PawnColor('black'))
-        gen_white_places = self.make_places_gen(PawnColor('white'))
+        gen_black_places = self.make_places_gen(PawnColor('BLACK'))
+        gen_white_places = self.make_places_gen(PawnColor('WHITE'))
 
-        for pawn in range(self.pawns_for_site):
+        for pawn_id in range(self.pawns_for_site):
             self.white_pawns.append(
-                Pawn(next(gen_white_places), PawnColor('white'), PawnType('normal'))
+                Pawn(pawn_id, next(gen_white_places), PawnColor('WHITE'), PawnType('NORMAL'))
             )
             self.black_pawns.append(
-                Pawn(next(gen_black_places), PawnColor('black'), PawnType('normal'))
+                Pawn(pawn_id, next(gen_black_places), PawnColor('BLACK'), PawnType('NORMAL'))
             )
 
     def make_places_gen(self, color:PawnColor)->iter:
@@ -37,5 +37,10 @@ class Board(CheckersInterface):
     def get_state(self):
         return State(self.white_pawns, self.black_pawns)
 
-    def resolve_moves(self):
-        pass
+    def resolve_moves(self, side: PawnColor)->list:
+        # directions = ((1,1),(1,-1),(-1,-1),(-1,1))
+        pawns = self.get_pawns(side)
+
+
+    def get_pawns(self, side: PawnColor):
+        return self.white_pawns if side.name == 'WHITE' else self.black_pawns

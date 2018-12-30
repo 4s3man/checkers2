@@ -2,8 +2,8 @@ from enum import Enum
 
 
 class PawnColor(Enum):
-    WHITE = 'white'
-    BLACK = 'black'
+    WHITE = 'WHITE'
+    BLACK = 'BLACK'
 
     def opposite(self):
-        return PawnColor('black') if self.name == 'WHITE' else PawnColor('white')
+        return PawnColor('BLACK') if self.name == 'WHITE' else PawnColor('BLACK')

@@ -5,14 +5,16 @@ from checkers.abstract_game_object import GameObj
 
 
 class Pawn(GameObj):
-    _id = count(1)
-    color = None
-    type = None
+    id = 0
+    type = ''
     """position y,x"""
     position = ()
 
-    def __init__(self, position:tuple, color:PawnColor, type:PawnType):
-        self.id = next(self._id)
+    #todo nie używać i usunąć w przyszłości
+    color = ''
+
+    def __init__(self, id:int, position:tuple, color:PawnColor, type:PawnType):
+        self.id = id
         self.position = position
         self.color = color.name
         self.type = type.name
