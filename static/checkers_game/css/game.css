@@ -1,0 +1,142 @@
+.game{
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  font-size: 16px;
+}
+.ctrl{
+  display: flex;
+  flex-flow: column nowrap;
+  text-transform: capitalize;
+  align-items: center;
+  padding-top: 12px;
+  flex-grow: 5;
+}
+.ctrl__item{
+  margin: 10px 5px;
+  padding: 10px;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+.ctrl__item:hover{
+  text-shadow: 0px 3px 4px green;
+  border-left: 2px solid green;
+  border-right: 2px solid green;
+  border-radius: 10px;
+}
+
+.board{
+  position: relative;
+  border:2px solid black;
+  display: grid;
+  grid-template-columns: repeat(8, 3em);
+  grid-template-rows: repeat(8, 3em);
+}
+
+.board__field{
+  cursor: default;
+  width: 3em;
+  height: 3em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.board__field--black{
+  background-color: #666666;
+}
+
+.board__field--white{
+  background-color: black;
+}
+
+.board__field .pulse--selectPawn, .board__field .pulse--deselectPawn, .pulse--deselectPawn, .pulse--selectPawn, .pulse--fetchBoardState{
+  cursor: pointer;
+}
+.pulse--selectPawn{
+  animation:pulsation-yellow 3s infinite alternate;
+  -webkit-animation:pulsation-yellow 3s infinite; /* dla Google Chrome, Safari, Opera 15+ */
+}
+.pulse--deselectPawn, .pulse--fetchBoardState{
+  animation:pulsation-green 3s infinite alternate;
+  -webkit-animation:pulsation-green 3s infinite; /* dla Google Chrome, Safari, Opera 15+ */
+}
+
+@keyframes pulsation-yellow
+{
+0% { box-shadow: 0px 0px 10px inset yellow; }
+50% { box-shadow: 0px 0px 20px inset yellow; }
+100% { box-shadow: 0px 0px 10px inset yellow; }
+}
+
+@-webkit-keyframes pulsation-yellow /* dla Google Chrome, Safari, Opera 15+ */
+{
+  0% { box-shadow: 0px 0px 10px inset yellow; }
+  50% { box-shadow: 0px 0px 20px inset yellow; }
+  100% { box-shadow: 0px 0px 10px inset yellow; }
+}
+
+@keyframes pulsation-green
+{
+0% { box-shadow: 0px 0px 10px inset green; }
+50% { box-shadow: 0px 0px 20px inset green; }
+100% { box-shadow: 0px 0px 10px inset green; }
+}
+
+@-webkit-keyframes pulsation-green /* dla Google Chrome, Safari, Opera 15+ */
+{
+  0% { box-shadow: 0px 0px 10px inset green; }
+  50% { box-shadow: 0px 0px 20px inset green; }
+  100% { box-shadow: 0px 0px 10px inset green; }
+}
+
+
+.pawn{
+  display: flex;
+  width: 2em;
+  height: 2em;
+  border-radius: 80px;
+  cursor: inherit;
+  /* DEBUG PURPOSES*/
+  color:black;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.pawn--queen{
+  border: 2px solid red;
+}
+
+.pawn--white{
+  background-color: white;
+}
+
+.pawn--black{
+  background-color: brown;
+}
+
+.board::before, .board::after {
+    position: absolute;
+    width: 30px;
+    content: '0 1 2 3 4 5 6 7';
+    text-align: center;
+    width: 10px;
+    line-height: 50px;
+}
+.board::before{
+  right: -40px;
+  height: 404px;
+}
+.board::after{
+  bottom:-40px;
+  width: 404px;
+  height: 30px;
+  letter-spacing: 18px;
+}
+
+@media (max-width:576px){
+  .game{
+    font-size:12px;
+  }
+}
