@@ -5,5 +5,8 @@ class CheckersServiceInterface():
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def response(self):raise NotImplementedError
+    def init_game(self):raise NotImplementedError
+
+    @abstractmethod
+    def handle_move(self):raise NotImplementedError
 

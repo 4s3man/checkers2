@@ -6,4 +6,4 @@ class PawnColor(Enum):
     BLACK = 'black'
 
     def opposite(self):
-        return PawnColor('black') if self.value == 'white' else PawnColor('black')
+        return PawnColor('black') if self.name == 'WHITE' else PawnColor('white')

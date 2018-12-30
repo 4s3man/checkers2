@@ -6,6 +6,9 @@ def test_opposite():
     color = PawnColor('white')
     assert 'BLACK' == color.opposite().name
 
+    color = PawnColor('black')
+    assert 'WHITE' == color.opposite().name
+
     with pytest.raises(ValueError):
         PawnColor('bad_color')
 

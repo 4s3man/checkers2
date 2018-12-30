@@ -14,6 +14,6 @@ class Pawn(GameObj):
     def __init__(self, position:tuple, color:PawnColor, type:PawnType):
         self.id = next(self._id)
         self.position = position
-        self.color = color
-        self.type = type
+        self.color = color.name
+        self.type = type.name
 
