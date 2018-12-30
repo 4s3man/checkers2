@@ -3,6 +3,7 @@ from checkers.pawn_color import PawnColor
 from checkers.pawn_type import PawnType
 from checkers.abstract_game_object import GameObj
 
+
 class Pawn(GameObj):
     _id = count(1)
     color = None
@@ -15,3 +16,4 @@ class Pawn(GameObj):
         self.position = position
         self.color = color
         self.type = type
+
