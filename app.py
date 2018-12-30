@@ -11,8 +11,6 @@ def choose_game():
 @app.route('/game/hotseat', methods=['POST', 'GET'])
 def hot_seat():
     board = Board()
-    for pawn in board.black_pawns:
-        print(pawn.position)
     return render_template('games/hot_seat.jinja2')
 
 if __name__ == '__main__':
