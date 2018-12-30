@@ -16,10 +16,10 @@ class State(GameObj, JsonSerializableInterface):
     @classmethod
     def from_json(self, json_string: str):
         state_dict = json.loads(json_string)
-        self.white_pawns = self.convert_pawn(State, PawnColor('WHITE'), state_dict['white_pawns'])
-        self.black_pawns = self.convert_pawn(State, PawnColor('BLACK'), state_dict['white_pawns'])
+        white_pawns = self.convert_pawn(State, PawnColor('WHITE'), state_dict['white_pawns'])
+        black_pawns = self.convert_pawn(State, PawnColor('BLACK'), state_dict['black_pawns'])
 
-        return self
+        return self(white_pawns, black_pawns)
 
     def convert_pawn(self, color: PawnColor, pawn_data: dict):
         convert_pawn = (lambda p, c=color: Pawn(p['id'], p['position'], color, PawnType(p['type'])))
@@ -27,4 +27,3 @@ class State(GameObj, JsonSerializableInterface):
             convert_pawn,
             pawn_data
         ))
-

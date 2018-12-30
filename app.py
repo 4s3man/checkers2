@@ -15,7 +15,7 @@ def choose_game():
 
 @app.route('/game/hotseat', methods=['POST', 'GET'])
 def hot_seat():
-    board = Board()#one_pawn_at_1_1_state())
+    board = Board(for_queen_blocking_pawns_state())
     z = board.get_state()
 
     session['board_state'] = z.to_json()

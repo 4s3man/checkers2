@@ -1,15 +1,15 @@
 import pytest
 from checkers.state import *
 
-def makeState(dict_state: dict):
+def makeState(dict_state: dict)->State:
     return State.from_json(json.dumps(dict_state))
 
 @pytest.fixture
 def one_pawn_at_1_1_state():
     return makeState({
-    "WHITE_pawns":
+    "white_pawns":
         [
-        {"position":(1,1), "color": "WHITE", "type": "NORMAL"}
+        {"id":1, "position":(1,1), "color": "WHITE", "type": "NORMAL"}
         ],
     "black_pawns":
         []
@@ -18,7 +18,7 @@ def one_pawn_at_1_1_state():
 @pytest.fixture
 def different_pawns_around_WHITE_state():
     return makeState({
-        "WHITE_pawns":
+        "white_pawns":
             [
             {"id":1, "position": (3,3) , "color": "WHITE", "type": "NORMAL"},
             {"id":2, "position": (2,4), "color": "WHITE", "type": "NORMAL"},
@@ -35,7 +35,7 @@ def different_pawns_around_WHITE_state():
 @pytest.fixture
 def extended_circle_state():
     return makeState({
-        "WHITE_pawns":
+        "white_pawns":
             [
             {"id":1, "position": (5,3), "color": "WHITE", "type": "NORMAL"},
             {"id":2, "position": (1,5), "color": "WHITE", "type": "NORMAL"},
@@ -57,7 +57,7 @@ def extended_circle_state():
 @pytest.fixture
 def for_queen_state():
     return makeState({
-        "WHITE_pawns":
+        "white_pawns":
             [
             {"id":1, "position":( 4, 2), "color": "WHITE", "type": "QUEEN"},
             ],
@@ -73,7 +73,7 @@ def for_queen_state():
 @pytest.fixture
 def for_queen_blocking_pawns_state():
     return makeState({
-        "WHITE_pawns":
+        "white_pawns":
             [
 
             {"position":( 4, 2), "color": "WHITE", "type": "QUEEN",  "id": 1},
@@ -94,7 +94,7 @@ def for_queen_blocking_pawns_state():
 @pytest.fixture
 def for_queen_normal_moves_state():
     return makeState({
-        "WHITE_pawns":
+        "white_pawns":
             [
 
             {"position":( 4, 2), "color": "WHITE", "type": "QUEEN",  "id": 1},
@@ -109,7 +109,7 @@ def for_queen_normal_moves_state():
 @pytest.fixture
 def queen_extended_circle_state():
     return makeState({
-        "WHITE_pawns":
+        "white_pawns":
             [
 
             {"position":( 7, 1), "color": "WHITE", "type": "QUEEN",  "id": 1},
@@ -131,7 +131,7 @@ def queen_extended_circle_state():
 @pytest.fixture
 def no_blocked_beating_move_bug():
     return makeState({
-        "WHITE_pawns":
+        "white_pawns":
             [
 
             {"position":( 2, 4), "color": "WHITE", "type": "QUEEN",  "id": 1},
@@ -151,7 +151,7 @@ def no_blocked_beating_move_bug():
 @pytest.fixture
 def only_queens_state():
     return makeState({
-        "WHITE_pawns":
+        "white_pawns":
             [
 
             {"position":( 4, 2), "color": "WHITE", "type": "QUEEN",  "id": 1},
@@ -169,7 +169,7 @@ def only_queens_state():
 @pytest.fixture
 def black_win_state():
     return makeState({
-        "WHITE_pawns":
+        "white_pawns":
             [
 
             ],
@@ -183,7 +183,7 @@ def black_win_state():
 @pytest.fixture
 def WHITE_win_state():
     return makeState({
-        "WHITE_pawns":
+        "white_pawns":
             [
             {"position":( 3, 1), "color": "WHITE", "type": "QUEEN",  "id": 0},
             {"position":( 2, 4), "color": "WHITE", "type": "QUEEN",  "id": 1},
@@ -197,7 +197,7 @@ def WHITE_win_state():
 @pytest.fixture
 def two_queens_state():
     return makeState({
-        "WHITE_pawns":
+        "white_pawns":
             [
             {"position":( 3, 1), "color": "WHITE", "type": "QUEEN",  "id": 0},
 
@@ -210,4 +210,4 @@ def two_queens_state():
     })
 @pytest.fixture
 def no_moves_for_black():
-    return State('{"WHITE_pawns": [{"color": "WHITE", "id": 0, "type": "QUEEN", 1, "position":( 1,  "moves": []}, null, null, {"color": "WHITE", "id": 3, "type": "NORMAL", 7, "position":( 3,  "moves": []}, null, null, {"color": "WHITE", "id": 6, "type": "NORMAL", 3, "position":( 5,  "moves": []}, {"color": "WHITE", "id": 7, "type": "NORMAL", 7, "position":( 5,  "moves": []}, {"color": "WHITE", "id": 8, "type": "NORMAL", 1, "position":( 7,  "moves": []}, {"color": "WHITE", "id": 9, "type": "NORMAL", 5, "position":( 3,  "moves": []}, {"color": "WHITE", "id": 10, "type": "NORMAL", 6, "position":( 6,  "moves": []}, {"color": "WHITE", "id": 11, "type": "NORMAL", 7, "position":( 7,  "moves": []}], "black_pawns": [null, null, null, null, null, null, null, null, {"color": "BLACK", "id": 8, "type": "NORMAL", 0, "position":( 6,  "moves": []}, null, null, null], "winner": ""}')
+    return State('{"white_pawns": [{"color": "WHITE", "id": 0, "type": "QUEEN", 1, "position":( 1,  "moves": []}, null, null, {"color": "WHITE", "id": 3, "type": "NORMAL", 7, "position":( 3,  "moves": []}, null, null, {"color": "WHITE", "id": 6, "type": "NORMAL", 3, "position":( 5,  "moves": []}, {"color": "WHITE", "id": 7, "type": "NORMAL", 7, "position":( 5,  "moves": []}, {"color": "WHITE", "id": 8, "type": "NORMAL", 1, "position":( 7,  "moves": []}, {"color": "WHITE", "id": 9, "type": "NORMAL", 5, "position":( 3,  "moves": []}, {"color": "WHITE", "id": 10, "type": "NORMAL", 6, "position":( 6,  "moves": []}, {"color": "WHITE", "id": 11, "type": "NORMAL", 7, "position":( 7,  "moves": []}], "black_pawns": [null, null, null, null, null, null, null, null, {"color": "BLACK", "id": 8, "type": "NORMAL", 0, "position":( 6,  "moves": []}, null, null, null], "winner": ""}')
