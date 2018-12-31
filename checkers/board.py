@@ -1,6 +1,7 @@
 from checkers.state import *
 from checkers.global_constants import DIRECTIONS
 from checkers.exceptions import *
+from checkers.move import Move
 from checkers.vec import Vec
 from checkers.checkers_interface import CheckersInterface
 from copy import deepcopy
@@ -54,11 +55,26 @@ class Board(CheckersInterface):
         return self.get_jump_moves(pawn) or self.get_normal_pawn_moves(pawn)
 
 
-    #todo do zrobienia
-    def get_jump_moves(self, pawn: Pawn, enemies: list, carrier: dict = {}, move_list: list = [])->list:
-        pass
+    # #todo do zrobienia
+    def get_jump_moves(self, pawn: Pawn, carrier: dict = {'beated_pawn_ids':[], 'visited_fields':[], 'id':0}, move_list: list = [])->list:
+        for jump in self.make_jumps_generator(pawn, carrier['beated_pawn_ids']):
+            carrier['visited_fields'].append(jump[0])
+            carrier['beated_pawn_ids'].append(jump[1])
 
-    #todo nie działa
+            virtual_pawn = deepcopy(pawn)
+            virtual_pawn.position = jump[0]
+
+            self.get_jump_moves(virtual_pawn, carrier, move_list)
+        else:
+            carrier['id'] = 1
+            carrier['pawn_id'] = pawn.id
+            move_list.append(
+                Move(**carrier)
+            )
+            return move_list
+
+
+    #todo zmienić na moves generator, i żeby robił uzupełniał ruch już tu
     def make_jumps_generator(self, pawn: Pawn, beated_pawn_ids: list=[])->iter:
         """Returns tuple of position after jump and beated pawn id if can jump in direction"""
         for d in DIRECTIONS:
@@ -66,7 +82,7 @@ class Board(CheckersInterface):
                 next_field = self.next_field_in_direction(pawn.position, d)
                 if next_field == enemy.position:
                     field_after_jump = self.next_field_in_direction(next_field, d)
-                    if self.can_jump_over_enemy(pawn, field_after_jump, beated_pawn_ids):
+                    if self.can_jump_over_enemy(pawn, enemy, field_after_jump, beated_pawn_ids):
                         yield (self.next_field_in_direction(next_field, d), enemy.id)
 
 
@@ -75,11 +91,16 @@ class Board(CheckersInterface):
         return (Vec(direction) + Vec(position)).vec
 
 
-    def can_jump_over_enemy(self, pawn: Pawn, destination: tuple, beated_pawn_ids: list)->bool:
+    def can_jump_over_enemy(self,pawn:Pawn, enemy: Pawn, destination: tuple, beated_pawn_ids: list)->bool:
         """Return false if distination out of board """
         if not self.has_position(destination): return False
-        """Return false if enemy was already beated"""
+
+        """Return false if place is busy"""
         if destination in [pawn.position for pawn in self.get_all_pawns_but_one(pawn)]: return False
+
+        """Return false if enemy was already beated"""
+        if enemy.id in beated_pawn_ids: return False
+
         return True
 
 

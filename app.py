@@ -15,8 +15,12 @@ def choose_game():
 
 @app.route('/game/hotseat', methods=['POST', 'GET'])
 def hot_seat():
-    board = Board(different_pawns_around_white_state())
+    board = Board(extended_circle_state())
     z = board.get_state()
+
+    b1 = Board(extended_circle_state())
+    b1.enemy_side = PawnColor('BLACK')
+    moevs = b1.get_jump_moves(b1.white_pawns[0])
 
     session['board_state'] = z.to_json()
 

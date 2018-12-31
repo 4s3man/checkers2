@@ -45,26 +45,43 @@ def test_can_jump_over_enemy(different_pawns_around_white_state):
     b = Board(different_pawns_around_white_state)
     pawn0 = b.white_pawns[0]
     pawn1 = b.white_pawns[1]
-    assert True == b.can_jump_over_enemy(pawn0, (1,1), [])
-    assert False == b.can_jump_over_enemy(pawn0, (2, 2), [])
-    assert True == b.can_jump_over_enemy(pawn0, (4, 4), [])
+    assert True == b.can_jump_over_enemy(pawn0, b.black_pawns[0], (1,1), [])
+    assert False == b.can_jump_over_enemy(pawn0, b.black_pawns[0], (1, 1), [3])
 
-    assert False == b.can_jump_over_enemy(pawn1, (3,3), [])
-    assert False == b.can_jump_over_enemy(pawn1, (5, 7), [])
-    assert True == b.can_jump_over_enemy(pawn1, (4, 4), [])
+    assert False == b.can_jump_over_enemy(pawn0, b.black_pawns[0], (2, 2), [])
+    assert True == b.can_jump_over_enemy(pawn0, b.black_pawns[0], (4, 4), [])
 
 def test_next_field_in_direction():
     b = Board()
     assert (6,4) == b.next_field_in_direction((5,3), (1,1))
 
-#todo dla wszystkich fixtur
-def test_make_jumps_generator(different_pawns_around_white_state):
+
+def test_make_jumps_generator(different_pawns_around_white_state, extended_circle_state):
     b = Board(different_pawns_around_white_state)
     b.enemy_side = PawnColor('BLACK')
     gen1 = b.make_jumps_generator(b.white_pawns[0], [])
     for t in gen1:
-        print(t)
+        assert t == ((1,1), 3)
 
+    b.enemy_side = PawnColor('WHITE')
+    gen2 = b.make_jumps_generator(b.white_pawns[0], [])
+    for t in gen1:
+        assert t == ()
+
+    b1 = Board(extended_circle_state)
+    b1.enemy_side = PawnColor('BLACK')
+    gen3 = b1.make_jumps_generator(b1.white_pawns[0], [])
+    for t in gen3:
+        assert t in [((3,5), 7), ((3,1),6) ]
+
+    gen4 = b1.make_jumps_generator(b1.white_pawns[0], [7])
+    for t in gen4:
+        t == ((3,1),6)
+
+
+    gen5 = b1.make_jumps_generator(b1.white_pawns[3], [])
+    for t in gen4:
+        assert t == ((2,0), 10)
 
 # def test_position_generator(different_pawns_around_white_state):
 #     board = Board(different_pawns_around_white_state)
