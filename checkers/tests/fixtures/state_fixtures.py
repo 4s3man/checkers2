@@ -81,12 +81,12 @@ def for_queen_blocking_pawns_state():
             ],
         "black_pawns":
             [
-            {"position":( 3, 1), "color": "BLACK", "type": "NORMAL",  "id": 0},
-            {"position":( 2, 4), "color": "BLACK", "type": "NORMAL",  "id": 1},
-            {"position":( 6, 4), "color": "BLACK", "type": "NORMAL",  "id": 2},
-            {"position":( 6, 6), "color": "BLACK", "type": "NORMAL",  "id": 3},
-            {"position":( 1, 1), "color": "BLACK", "type": "NORMAL",  "id": 4},
-            {"position":( 1, 5), "color": "BLACK", "type": "NORMAL",  "id": 5},
+            {"position":( 3, 1), "color": "BLACK", "type": "NORMAL",  "id": 2},
+            {"position":( 2, 4), "color": "BLACK", "type": "NORMAL",  "id": 3},
+            {"position":( 6, 4), "color": "BLACK", "type": "NORMAL",  "id": 4},
+            {"position":( 6, 6), "color": "BLACK", "type": "NORMAL",  "id": 5},
+            {"position":( 1, 1), "color": "BLACK", "type": "NORMAL",  "id": 6},
+            {"position":( 1, 5), "color": "BLACK", "type": "NORMAL",  "id": 7},
 
             ]
     })
@@ -120,10 +120,10 @@ def queen_extended_circle_state():
             ],
         "black_pawns":
             [
-            {"position":( 2, 2), "color": "BLACK", "type": "NORMAL",  "id": 0},
-            {"position":( 4, 2), "color": "BLACK", "type": "NORMAL",  "id": 1},
-            {"position":( 4, 4), "color": "BLACK", "type": "NORMAL",  "id": 2},
-            {"position":( 2, 4), "color": "BLACK", "type": "NORMAL",  "id": 3},
+            {"position":( 2, 2), "color": "BLACK", "type": "NORMAL",  "id": 5},
+            {"position":( 4, 2), "color": "BLACK", "type": "NORMAL",  "id": 6},
+            {"position":( 4, 4), "color": "BLACK", "type": "NORMAL",  "id": 7},
+            {"position":( 2, 4), "color": "BLACK", "type": "NORMAL",  "id": 8},
 
             ]
     })
@@ -154,15 +154,15 @@ def only_queens_state():
         "white_pawns":
             [
 
-            {"position":( 4, 2), "color": "WHITE", "type": "QUEEN",  "id": 1},
+            {"position":( 4, 2), "color": "WHITE", "type": "QUEEN",  "id": 0},
 
-            {"position":( 5, 1), "color": "WHITE", "type": "QUEEN",  "id": 3},
+            {"position":( 5, 1), "color": "WHITE", "type": "QUEEN",  "id": 1},
 
             ],
         "black_pawns":
             [
-            {"position":( 3, 1), "color": "BLACK", "type": "QUEEN",  "id": 0},
-            {"position":( 2, 4), "color": "BLACK", "type": "QUEEN",  "id": 1},
+            {"position":( 3, 1), "color": "BLACK", "type": "QUEEN",  "id": 2},
+            {"position":( 2, 4), "color": "BLACK", "type": "QUEEN",  "id": 3},
 
             ]
     })
@@ -204,10 +204,29 @@ def two_queens_state():
             ],
             "black_pawns":
             [
-            {"position":( 4, 6), "color": "BLACK", "type": "QUEEN",  "id": 0},
+            {"position":( 4, 6), "color": "BLACK", "type": "QUEEN",  "id": 1},
 
             ]
     })
+@pytest.fixture
+def flower_state():
+    return makeState({
+        "white_pawns":
+            [
+            {"position":( 3, 3), "color": "WHITE", "type": "NORMAL",  "id": 0},
+
+            ],
+            "black_pawns":
+            [
+            {"position":( 4, 4), "color": "BLACK", "type": "NORMAL",  "id": 1},
+            {"position": (2, 2), "color": "BLACK", "type": "NORMAL", "id": 2},
+            {"position": (4, 2), "color": "BLACK", "type": "NORMAL", "id": 3},
+            {"position": (2, 4), "color": "BLACK", "type": "NORMAL", "id": 3},
+
+            ]
+    })
+
+
 @pytest.fixture
 def no_moves_for_black():
     return State('{"white_pawns": [{"color": "WHITE", "id": 0, "type": "QUEEN", 1, "position":( 1,  "moves": []}, null, null, {"color": "WHITE", "id": 3, "type": "NORMAL", 7, "position":( 3,  "moves": []}, null, null, {"color": "WHITE", "id": 6, "type": "NORMAL", 3, "position":( 5,  "moves": []}, {"color": "WHITE", "id": 7, "type": "NORMAL", 7, "position":( 5,  "moves": []}, {"color": "WHITE", "id": 8, "type": "NORMAL", 1, "position":( 7,  "moves": []}, {"color": "WHITE", "id": 9, "type": "NORMAL", 5, "position":( 3,  "moves": []}, {"color": "WHITE", "id": 10, "type": "NORMAL", 6, "position":( 6,  "moves": []}, {"color": "WHITE", "id": 11, "type": "NORMAL", 7, "position":( 7,  "moves": []}], "black_pawns": [null, null, null, null, null, null, null, null, {"color": "BLACK", "id": 8, "type": "NORMAL", 0, "position":( 6,  "moves": []}, null, null, null], "winner": ""}')

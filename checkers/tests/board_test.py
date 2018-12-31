@@ -83,6 +83,11 @@ def test_make_jumps_generator(different_pawns_around_white_state, extended_circl
     for t in gen4:
         assert t == ((2,0), 10)
 
+    b1 = Board(extended_circle_state)
+    b1.enemy_side = PawnColor('BLACK')
+    gen = b1.make_jumps_generator(b1.white_pawns[1], [])
+    for j in gen: print(j)
+
 # def test_position_generator(different_pawns_around_white_state):
 #     board = Board(different_pawns_around_white_state)
 #     board.enemies = board.get_pawns(PawnColor('BLACK'))

@@ -54,27 +54,27 @@ class Board(CheckersInterface):
     def resolve_for_pawn(self, pawn: Pawn, enemies: list):
         return self.get_jump_moves(pawn) or self.get_normal_pawn_moves(pawn)
 
-
-    # #todo do zrobienia
+    #todo nie działa prawdopodobnie robi nowy generator i zwraca ten sam ruch zamiast następnego
     def get_jump_moves(self, pawn: Pawn, carrier: dict = {'beated_pawn_ids':[], 'visited_fields':[], 'id':0}, move_list: list = [])->list:
-        for jump in self.make_jumps_generator(pawn, carrier['beated_pawn_ids']):
-            carrier['visited_fields'].append(jump[0])
-            carrier['beated_pawn_ids'].append(jump[1])
+        pass
+        # for jump in self.make_jumps_generator(pawn, carrier['beated_pawn_ids']):
+        #     carrier['visited_fields'].append(jump[0])
+        #     carrier['beated_pawn_ids'].append(jump[1])
+        #
+        #
+        #     virtual_pawn = deepcopy(pawn)
+        #     virtual_pawn.position = jump[0]
+        #
+        #     self.get_jump_moves(gen, virtual_pawn, carrier, move_list)
+        # else:
+        #     carrier['id'] += 1
+        #     carrier['pawn_id'] = pawn.id
+        #     move_list.append(Move(**carrier))
+        #     carrier = {'beated_pawn_ids':[], 'visited_fields':[], 'id':carrier['id']}
+        #     return move_list
 
-            virtual_pawn = deepcopy(pawn)
-            virtual_pawn.position = jump[0]
 
-            self.get_jump_moves(virtual_pawn, carrier, move_list)
-        else:
-            carrier['id'] = 1
-            carrier['pawn_id'] = pawn.id
-            move_list.append(
-                Move(**carrier)
-            )
-            return move_list
-
-
-    #todo zmienić na moves generator, i żeby robił uzupełniał ruch już tu
+    #todo zmienić na moves generator, i żeby robił uzupełniał ruch już tu?
     def make_jumps_generator(self, pawn: Pawn, beated_pawn_ids: list=[])->iter:
         """Returns tuple of position after jump and beated pawn id if can jump in direction"""
         for d in DIRECTIONS:
