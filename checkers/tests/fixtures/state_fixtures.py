@@ -16,7 +16,7 @@ def one_pawn_at_1_1_state():
     })
 
 @pytest.fixture
-def different_pawns_around_WHITE_state():
+def different_pawns_around_white_state():
     return makeState({
         "white_pawns":
             [
