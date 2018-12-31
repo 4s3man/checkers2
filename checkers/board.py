@@ -59,24 +59,28 @@ class Board(CheckersInterface):
         pass
 
     #todo nie działa
-    def make_jumps_generator(self, pawn: Pawn, beated_pawn_ids: list)->iter:
+    def make_jumps_generator(self, pawn: Pawn, beated_pawn_ids: list=[])->iter:
         """Returns tuple of position after jump and beated pawn id if can jump in direction"""
         for d in DIRECTIONS:
             for enemy in self.get_pawns(self.enemy_side):
                 next_field = self.next_field_in_direction(pawn.position, d)
                 if next_field == enemy.position:
                     field_after_jump = self.next_field_in_direction(next_field, d)
-                    yield (self.next_field_in_direction(next_field, d), enemy.id)
+                    if self.can_jump_over_enemy(pawn, field_after_jump, beated_pawn_ids):
+                        yield (self.next_field_in_direction(next_field, d), enemy.id)
 
-        # return ( (self.calc_after_jump(d, pawn.position), enemy.id) for d in DIRECTIONS for enemy in self.enemy_side if (Vec(d) + Vec(pawn.position)).vec == enemy.position )
 
     def next_field_in_direction(self, position: tuple, direction: tuple)->tuple:
+        """Returns field nexto to position in direction"""
         return (Vec(direction) + Vec(position)).vec
 
-    #todo to co robie1
-    def can_jump(self, pawn: Pawn, destination: tuple, beated_pawn_ids: list)->bool:
+
+    def can_jump_over_enemy(self, pawn: Pawn, destination: tuple, beated_pawn_ids: list)->bool:
+        """Return false if distination out of board """
         if not self.has_position(destination): return False
+        """Return false if enemy was already beated"""
         if destination in [pawn.position for pawn in self.get_all_pawns_but_one(pawn)]: return False
+        return True
 
 
     def get_all_pawns_but_one(self, pawn: Pawn):
@@ -87,7 +91,7 @@ class Board(CheckersInterface):
     def has_position(self, position: tuple)->bool:
         """sprawdza czy board posiada daną pozycję"""
         for d in position:
-            if d < 0 or d > self.board_size: return False
+            if d < 0 or d > self.board_size-1: return False
         return True
 
     # todo do zrobienia

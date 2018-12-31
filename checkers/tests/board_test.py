@@ -35,18 +35,35 @@ def test_get_all_pawns_but_one(different_pawns_around_white_state):
 
 def test_has_position():
     b = Board()
-    false_pos = [ (x, y) for x in [-1, b.board_size+1] for y in [b.board_size + 1, (-1)]]
+    false_pos = [ (x, y) for x in [-1, b.board_size] for y in [b.board_size, (-1)]]
     true_pos = (3,3)
     for pos in false_pos:
         assert False == b.has_position(pos)
     assert True == b.has_position(true_pos)
 
-# def test_make_jumps_generator(different_pawns_around_white_state):
-#     b = Board(different_pawns_around_white_state)
-#     b.enemy_side = PawnColor('BLACK')
-#     gen1 = b.make_jumps_generator(b.white_pawns[0], [])
-#     for t in gen1:
-#         print(t)
+def test_can_jump_over_enemy(different_pawns_around_white_state):
+    b = Board(different_pawns_around_white_state)
+    pawn0 = b.white_pawns[0]
+    pawn1 = b.white_pawns[1]
+    assert True == b.can_jump_over_enemy(pawn0, (1,1), [])
+    assert False == b.can_jump_over_enemy(pawn0, (2, 2), [])
+    assert True == b.can_jump_over_enemy(pawn0, (4, 4), [])
+
+    assert False == b.can_jump_over_enemy(pawn1, (3,3), [])
+    assert False == b.can_jump_over_enemy(pawn1, (5, 7), [])
+    assert True == b.can_jump_over_enemy(pawn1, (4, 4), [])
+
+def test_next_field_in_direction():
+    b = Board()
+    assert (6,4) == b.next_field_in_direction((5,3), (1,1))
+
+#todo dla wszystkich fixtur
+def test_make_jumps_generator(different_pawns_around_white_state):
+    b = Board(different_pawns_around_white_state)
+    b.enemy_side = PawnColor('BLACK')
+    gen1 = b.make_jumps_generator(b.white_pawns[0], [])
+    for t in gen1:
+        print(t)
 
 
 # def test_position_generator(different_pawns_around_white_state):
