@@ -1,8 +1,9 @@
 from checkers.state import *
-from checkers.vec import Vec
 from checkers.global_constants import DIRECTIONS
 from checkers.exceptions import *
+from checkers.vec import Vec
 from checkers.checkers_interface import CheckersInterface
+from copy import deepcopy
 
 class Board(CheckersInterface):
     """BOARD SIZE MUST BE EVEN"""
@@ -42,7 +43,7 @@ class Board(CheckersInterface):
 
     def resolve_moves(self, side: PawnColor)->list:
         moves = []
-        self.enemies = self.get_pawns(side.opposite())
+        self.enemies = side.opposite()
         for pawn in self.get_pawns(side):
             if pawn.type == 'NORMAL':
                 moves += self.resolve_for_pawn(pawn)
@@ -58,14 +59,36 @@ class Board(CheckersInterface):
         pass
 
     #todo nie działa
-    def generate_jump_directions(self, pawn: Pawn)->iter:
-        return (d for d in DIRECTIONS for x in self.enemy_position_generator() if [d[0] + pawn.position[0], d[1] + pawn.position[1]] == x )
+    def make_jumps_generator(self, pawn: Pawn, beated_pawn_ids: list)->iter:
+        """Returns tuple of position after jump and beated pawn id if can jump in direction"""
+        for d in DIRECTIONS:
+            for enemy in self.get_pawns(self.enemy_side):
+                next_field = self.next_field_in_direction(pawn.position, d)
+                if next_field == enemy.position:
+                    field_after_jump = self.next_field_in_direction(next_field, d)
+                    yield (self.next_field_in_direction(next_field, d), enemy.id)
 
-    def enemy_position_generator(self):
-        if getattr(self, 'enemies', None):
-            return (e.position for e in self.enemies)
-        else:
-            raise InvalidUsageException('self.enemies should be specified to use this func')
+        # return ( (self.calc_after_jump(d, pawn.position), enemy.id) for d in DIRECTIONS for enemy in self.enemy_side if (Vec(d) + Vec(pawn.position)).vec == enemy.position )
+
+    def next_field_in_direction(self, position: tuple, direction: tuple)->tuple:
+        return (Vec(direction) + Vec(position)).vec
+
+    #todo to co robie1
+    def can_jump(self, pawn: Pawn, destination: tuple, beated_pawn_ids: list)->bool:
+        if not self.has_position(destination): return False
+        if destination in [pawn.position for pawn in self.get_all_pawns_but_one(pawn)]: return False
+
+
+    def get_all_pawns_but_one(self, pawn: Pawn):
+        """zwraca listę wszystkich pionków oprócz podanego"""
+        return list(filter(lambda p: pawn.id != p.id, self.white_pawns + self.black_pawns))
+
+
+    def has_position(self, position: tuple)->bool:
+        """sprawdza czy board posiada daną pozycję"""
+        for d in position:
+            if d < 0 or d > self.board_size: return False
+        return True
 
     # todo do zrobienia
     def get_normal_pawn_moves(self, pawn: Pawn)->list:

@@ -25,30 +25,53 @@ def test_get_pawns():
 
     assert black_pawns != white_pawns
 
+def test_get_all_pawns_but_one(different_pawns_around_white_state):
+    b = Board()
+    pawn0 = b.white_pawns[0]
+    pawn1 = b.white_pawns[1]
 
-def test_position_generator(different_pawns_around_white_state):
-    board = Board(different_pawns_around_white_state)
-    board.enemies = board.get_pawns(PawnColor('BLACK'))
-    gen = board.enemy_position_generator()
-    for x in gen:
-        assert x in [[2,2], [4,2], [5,1], [5,7]]
+    assert pawn0.id not in b.get_all_pawns_but_one(b.white_pawns[0])
+    assert pawn1.id not in b.get_all_pawns_but_one(b.white_pawns[1])
 
-    board.enemies = board.get_pawns(PawnColor('WHITE'))
-    gen1 = board.enemy_position_generator()
-    for x in gen1:
-        assert x in [[3,3], [2,4]]
+def test_has_position():
+    b = Board()
+    false_pos = [ (x, y) for x in [-1, b.board_size+1] for y in [b.board_size + 1, (-1)]]
+    true_pos = (3,3)
+    for pos in false_pos:
+        assert False == b.has_position(pos)
+    assert True == b.has_position(true_pos)
 
-    board.enemies = None
-    with pytest.raises(InvalidUsageException):
-        gen1 = board.enemy_position_generator()
+# def test_make_jumps_generator(different_pawns_around_white_state):
+#     b = Board(different_pawns_around_white_state)
+#     b.enemy_side = PawnColor('BLACK')
+#     gen1 = b.make_jumps_generator(b.white_pawns[0], [])
+#     for t in gen1:
+#         print(t)
 
-    del board.enemies
-    with pytest.raises(InvalidUsageException):
-        gen1 = board.enemy_position_generator()
 
-def test_generate_jump_directions(different_pawns_around_white_state):
-    board = Board(different_pawns_around_white_state)
-    board.enemies = board.get_pawns(PawnColor('BLACK'))
-    gen = board.generate_jump_directions(board.white_pawns[0])
-    for x in gen:
-        print(x)
+# def test_position_generator(different_pawns_around_white_state):
+#     board = Board(different_pawns_around_white_state)
+#     board.enemies = board.get_pawns(PawnColor('BLACK'))
+#     gen = board.enemy_position_generator()
+#     for x in gen:
+#         assert x in [[2,2], [4,2], [5,1], [5,7]]
+#
+#     board.enemies = board.get_pawns(PawnColor('WHITE'))
+#     gen1 = board.enemy_position_generator()
+#     for x in gen1:
+#         assert x in [[3,3], [2,4]]
+#
+#     board.enemies = None
+#     with pytest.raises(InvalidUsageException):
+#         gen1 = board.enemy_position_generator()
+#
+#     del board.enemies
+#     with pytest.raises(InvalidUsageException):
+#         gen1 = board.enemy_position_generator()
+
+# def test_generate_jump_directions(different_pawns_around_white_state):
+#     board = Board(different_pawns_around_white_state)
+#     board.enemies = board.get_pawns(PawnColor('BLACK'))
+#     gen = board.generate_jump_directions(board.white_pawns[0])
+#     for x in gen:
+#         print(x)

@@ -22,7 +22,7 @@ class State(GameObj, JsonSerializableInterface):
         return self(white_pawns, black_pawns)
 
     def convert_pawn(self, color: PawnColor, pawn_data: dict):
-        convert_pawn = (lambda p, c=color: Pawn(p['id'], p['position'], color, PawnType(p['type'])))
+        convert_pawn = (lambda p, c=color: Pawn(p['id'], tuple(p['position']), color, PawnType(p['type'])))
         return list(map(
             convert_pawn,
             pawn_data

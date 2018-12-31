@@ -1,30 +1,25 @@
 class Vec():
-    vec = (0, 0)
+    vec = ()
 
     def __init__(self, yx: tuple):
+        assert len(yx) == 2
         self.vec = yx
-
-    def __eq__(self, other)->bool:
-        if not isinstance(other, Vec): return False
-        return self.vec[0] == other.vec[0] and self.vec[1] == other.vec[1]
-
-    def __ne__(self, other: iter)->bool:
-        if not isinstance(other, Vec): return False
-        return not self.__eq__(other)
 
     def __add__(self, other):
         assert isinstance(other, Vec)
-        return Vec(self.vec[0] + other.vec[0], self.vec[1] + other.vec[1])
+        return Vec(tuple(self.vec[i] + other.vec[i] for i in range(2)))
 
-    def __sub__(self, other):
-        assert isinstance(other, Vec)
-        return Vec(self.vec[0] - other.vec[0], self.vec[1] - other.vec[1])
+    def __mul__(self, other):
+        assert isinstance(other, int)
+        return Vec(tuple(self.vec[i] * other for i in range(2)))
 
-    def __iadd__(self, other):
-        assert isinstance(other, Vec)
-        self.vec[0] + other.vec[0]
-        self.vec[1] + other.vec[1]
+    def __eq__(self, other):
+        if isinstance(other, Vec):
+            return self.vec == other.vec
+        elif isinstance(other, tuple) and 2 == len(other):
+            return self.vec == other
+        else:
+            return False
 
-    def __isub__(self, other):
-        self.vec[0] - other.vec[0]
-        self.vec[1] - other.vec[1]
+    def __ne__(self, other):
+        return not self.__eq__(other)
