@@ -50,7 +50,7 @@ def extended_circle_state():
             {"id":8, "position":( 2, 4), "color": "BLACK", "type": "NORMAL"},
             {"id":9, "position":( 6, 6), "color": "BLACK", "type": "NORMAL"},
             {"id":10, "position":( 1, 1), "color": "BLACK", "type": "NORMAL"},
-            {"id":11, "position":( 7, 3), "color": "BLACK", "type": "NORMAL"},
+            {"id":11, "position":( 6, 4), "color": "BLACK", "type": "NORMAL"},
             ]
     })
 

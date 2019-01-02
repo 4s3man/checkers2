@@ -54,25 +54,26 @@ class Board(CheckersInterface):
     def resolve_for_pawn(self, pawn: Pawn, enemies: list):
         return self.get_jump_moves(pawn) or self.get_normal_pawn_moves(pawn)
 
-    #todo nie działa prawdopodobnie robi nowy generator i zwraca ten sam ruch zamiast następnego
-    def get_jump_moves(self, pawn: Pawn, carrier: dict = {'beated_pawn_ids':[], 'visited_fields':[], 'id':0}, move_list: list = [])->list:
-        pass
-        # for jump in self.make_jumps_generator(pawn, carrier['beated_pawn_ids']):
-        #     carrier['visited_fields'].append(jump[0])
-        #     carrier['beated_pawn_ids'].append(jump[1])
-        #
-        #
-        #     virtual_pawn = deepcopy(pawn)
-        #     virtual_pawn.position = jump[0]
-        #
-        #     self.get_jump_moves(gen, virtual_pawn, carrier, move_list)
-        # else:
-        #     carrier['id'] += 1
-        #     carrier['pawn_id'] = pawn.id
-        #     move_list.append(Move(**carrier))
-        #     carrier = {'beated_pawn_ids':[], 'visited_fields':[], 'id':carrier['id']}
-        #     return move_list
+    #todo działa w końcu !! przetestować i zrobić funkcje ograniczającą
+    def generate_move_data(self, pawn, beated, car={}):
+        car = {'v':[],'b':[]} if not car else deepcopy(car)
+        for jump in self.make_jumps_generator(pawn, car['b']):
+            """Kiedy wraca rekurencyjnie car posiada o 1 jump więcej niż powinien"""
+            if len(car['v']) and pawn.position != car['v'][-1]:
+                car['v'] = car['v'][:-1]
+                car['b'] = car['b'][:-1]
 
+            car['v'].append(jump[0])
+            car['b'].append(jump[1])
+
+            v1 = deepcopy(pawn)
+            v1.position = jump[0]
+
+            self.generate_move_data(v1, beated, car)
+        else:
+            if car not in beated:
+                beated.append(car)
+            return beated
 
     #todo zmienić na moves generator, i żeby robił uzupełniał ruch już tu?
     def make_jumps_generator(self, pawn: Pawn, beated_pawn_ids: list=[])->iter:
@@ -88,7 +89,7 @@ class Board(CheckersInterface):
 
     def next_field_in_direction(self, position: tuple, direction: tuple)->tuple:
         """Returns field nexto to position in direction"""
-        return (Vec(direction) + Vec(position)).vec
+        return tuple( x+y for y,x in zip(position, direction))
 
 
     def can_jump_over_enemy(self,pawn:Pawn, enemy: Pawn, destination: tuple, beated_pawn_ids: list)->bool:
@@ -96,14 +97,14 @@ class Board(CheckersInterface):
         if not self.has_position(destination): return False
 
         """Return false if place is busy"""
-        if destination in [pawn.position for pawn in self.get_all_pawns_but_one(pawn)]: return False
+        if destination in (pawn.position for pawn in self.get_all_pawns_but_one(pawn)): return False
 
         """Return false if enemy was already beated"""
         if enemy.id in beated_pawn_ids: return False
 
         return True
 
-
+    #todo tu tez powinien być generator
     def get_all_pawns_but_one(self, pawn: Pawn):
         """zwraca listę wszystkich pionków oprócz podanego"""
         return list(filter(lambda p: pawn.id != p.id, self.white_pawns + self.black_pawns))

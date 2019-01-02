@@ -15,15 +15,15 @@ def choose_game():
 
 @app.route('/game/hotseat', methods=['POST', 'GET'])
 def hot_seat():
-    board = Board(flower_state())
+    board = Board(extended_circle_state())
     z = board.get_state()
 
     #todo dodać do testów zrobić get_jump_move do końca
-    b1 = Board(flower_state())
+    b1 = Board(extended_circle_state())
     b1.enemy_side = PawnColor('BLACK')
-    gen = b1.make_jumps_generator(b1.white_pawns[0], [])
-    for j in gen:
-        s = j
+    gens = b1.generate_move_data(b1.white_pawns[0], [])
+    for g in gens:
+        print(g )
 
     session['board_state'] = z.to_json()
 
