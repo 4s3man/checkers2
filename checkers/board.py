@@ -54,11 +54,10 @@ class Board(CheckersInterface):
     def resolve_for_pawn(self, pawn: Pawn, enemies: list):
         return self.get_jump_moves(pawn) or self.get_normal_pawn_moves(pawn)
 
-    #todo działa w końcu !! przetestować i zrobić funkcje ograniczającą
+    #todo zmienić nazwę zrobić testy czy zwraca zawsze maxymalne ruchy?
     def generate_move_data(self, pawn, beated, car={}):
         car = {'v':[],'b':[]} if not car else deepcopy(car)
         for jump in self.make_jumps_generator(pawn, car['b']):
-            """Kiedy wraca rekurencyjnie car posiada o 1 jump więcej niż powinien"""
             if len(car['v']) and pawn.position != car['v'][-1]:
                 car['v'] = car['v'][:-1]
                 car['b'] = car['b'][:-1]
@@ -71,21 +70,27 @@ class Board(CheckersInterface):
 
             self.generate_move_data(v1, beated, car)
         else:
-            if car not in beated:
-                beated.append(car)
+            s = set(car['v'])
+            all = set()
+            for jump in beated: all.update(jump.visited_fields)
+            p = all >= s
+            if (len(beated) == 0 or not p) and len(car['v']) != 0:
+                beated.append(Move(len(beated) + 1, pawn.id, car['v'], car['b']))
+
             return beated
 
-    #todo zmienić na moves generator, i żeby robił uzupełniał ruch już tu?
+    #todo zmienić nazwę zrobić testy
     def make_jumps_generator(self, pawn: Pawn, beated_pawn_ids: list=[])->iter:
         """Returns tuple of position after jump and beated pawn id if can jump in direction"""
+        jumps = []
         for d in DIRECTIONS:
             for enemy in self.get_pawns(self.enemy_side):
                 next_field = self.next_field_in_direction(pawn.position, d)
                 if next_field == enemy.position:
                     field_after_jump = self.next_field_in_direction(next_field, d)
                     if self.can_jump_over_enemy(pawn, enemy, field_after_jump, beated_pawn_ids):
-                        yield (self.next_field_in_direction(next_field, d), enemy.id)
-
+                        jumps.append(((self.next_field_in_direction(next_field, d), enemy.id)))
+        return jumps
 
     def next_field_in_direction(self, position: tuple, direction: tuple)->tuple:
         """Returns field nexto to position in direction"""

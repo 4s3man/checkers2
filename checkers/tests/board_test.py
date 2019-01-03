@@ -87,30 +87,3 @@ def test_make_jumps_generator(different_pawns_around_white_state, extended_circl
     b1.enemy_side = PawnColor('BLACK')
     gen = b1.make_jumps_generator(b1.white_pawns[1], [])
     for j in gen: print(j)
-
-# def test_position_generator(different_pawns_around_white_state):
-#     board = Board(different_pawns_around_white_state)
-#     board.enemies = board.get_pawns(PawnColor('BLACK'))
-#     gen = board.enemy_position_generator()
-#     for x in gen:
-#         assert x in [[2,2], [4,2], [5,1], [5,7]]
-#
-#     board.enemies = board.get_pawns(PawnColor('WHITE'))
-#     gen1 = board.enemy_position_generator()
-#     for x in gen1:
-#         assert x in [[3,3], [2,4]]
-#
-#     board.enemies = None
-#     with pytest.raises(InvalidUsageException):
-#         gen1 = board.enemy_position_generator()
-#
-#     del board.enemies
-#     with pytest.raises(InvalidUsageException):
-#         gen1 = board.enemy_position_generator()
-
-# def test_generate_jump_directions(different_pawns_around_white_state):
-#     board = Board(different_pawns_around_white_state)
-#     board.enemies = board.get_pawns(PawnColor('BLACK'))
-#     gen = board.generate_jump_directions(board.white_pawns[0])
-#     for x in gen:
-#         print(x)
