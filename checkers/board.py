@@ -55,9 +55,9 @@ class Board(CheckersInterface):
         return self.get_jump_moves(pawn) or self.get_normal_pawn_moves(pawn)
 
     #todo zmienić nazwę zrobić testy czy zwraca zawsze maxymalne ruchy?
-    def generate_move_data(self, pawn, beated, car={}):
+    def generate_move_data(self, pawn, moves, car={}):
         car = {'v':[],'b':[]} if not car else deepcopy(car)
-        for jump in self.make_jumps_generator(pawn, car['b']):
+        for jump in self.get_beating_jumps(pawn, car['b']):
             if len(car['v']) and pawn.position != car['v'][-1]:
                 car['v'] = car['v'][:-1]
                 car['b'] = car['b'][:-1]
@@ -68,19 +68,19 @@ class Board(CheckersInterface):
             v1 = deepcopy(pawn)
             v1.position = jump[0]
 
-            self.generate_move_data(v1, beated, car)
+            self.generate_move_data(v1, moves, car)
         else:
             s = set(car['v'])
             all = set()
-            for jump in beated: all.update(jump.visited_fields)
+            for jump in moves: all.update(jump.visited_fields)
             p = all >= s
-            if (len(beated) == 0 or not p) and len(car['v']) != 0:
-                beated.append(Move(len(beated) + 1, pawn.id, car['v'], car['b']))
+            if (len(moves) == 0 or not p) and len(car['v']) != 0:
+                moves.append(Move(pawn.id, car['v'], car['b']))
 
-            return beated
+            return moves
 
     #todo zmienić nazwę zrobić testy
-    def make_jumps_generator(self, pawn: Pawn, beated_pawn_ids: list=[])->iter:
+    def get_beating_jumps(self, pawn: Pawn, beated_pawn_ids: list=[])->iter:
         """Returns tuple of position after jump and beated pawn id if can jump in direction"""
         jumps = []
         for d in DIRECTIONS:

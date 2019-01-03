@@ -56,34 +56,34 @@ def test_next_field_in_direction():
     assert (6,4) == b.next_field_in_direction((5,3), (1,1))
 
 
-def test_make_jumps_generator(different_pawns_around_white_state, extended_circle_state):
+def test_get_beating_jumps(different_pawns_around_white_state, extended_circle_state):
     b = Board(different_pawns_around_white_state)
     b.enemy_side = PawnColor('BLACK')
-    gen1 = b.make_jumps_generator(b.white_pawns[0], [])
+    gen1 = b.get_beating_jumps(b.white_pawns[0], [])
     for t in gen1:
         assert t == ((1,1), 3)
 
     b.enemy_side = PawnColor('WHITE')
-    gen2 = b.make_jumps_generator(b.white_pawns[0], [])
-    for t in gen1:
+    gen2 = b.get_beating_jumps(b.black_pawns[1], [])
+    for t in gen2:
         assert t == ()
 
     b1 = Board(extended_circle_state)
     b1.enemy_side = PawnColor('BLACK')
-    gen3 = b1.make_jumps_generator(b1.white_pawns[0], [])
+    gen3 = b1.get_beating_jumps(b1.white_pawns[0], [])
     for t in gen3:
-        assert t in [((3,5), 7), ((3,1),6) ]
+        assert t in [((7, 5), 11), ((3,5), 7), ((3,1),6) ]
 
-    gen4 = b1.make_jumps_generator(b1.white_pawns[0], [7])
+    gen4 = b1.get_beating_jumps(b1.white_pawns[0], [7])
     for t in gen4:
-        t == ((3,1),6)
+        assert t in [((7, 5), 11), ((3,1),6) ]
 
-
-    gen5 = b1.make_jumps_generator(b1.white_pawns[3], [])
-    for t in gen4:
+    gen5 = b1.get_beating_jumps(b1.white_pawns[3], [])
+    for t in gen5:
         assert t == ((2,0), 10)
 
     b1 = Board(extended_circle_state)
     b1.enemy_side = PawnColor('BLACK')
-    gen = b1.make_jumps_generator(b1.white_pawns[1], [])
-    for j in gen: print(j)
+    gen6 = b1.get_beating_jumps(b1.white_pawns[1], [])
+    for t in gen6:
+        assert t in [((3,3),8)]
