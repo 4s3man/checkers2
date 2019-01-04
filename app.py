@@ -15,12 +15,12 @@ def choose_game():
 
 @app.route('/game/hotseat', methods=['POST', 'GET'])
 def hot_seat():
-    board = Board(queen_extended_circle_state())
+    board = Board(for_queen_blocking_pawns_state())
     z = board.get_state()
 
     #todo dodać do testów zrobić get_jump_move do końca
     board.enemy_side = PawnColor('BLACK')
-    v = board.get_jump_moves_for_queen(board.white_pawns[0])
+    v = board.resolve_for_queen(board.white_pawns[0])
     v
 
     # for i in range(len(gens)):

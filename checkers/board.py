@@ -54,11 +54,12 @@ class Board(CheckersInterface):
     def resolve_for_pawn(self, pawn: Pawn, enemies: list):
         return self.get_jump_moves(pawn) or self.get_normal_pawn_moves(pawn)
 
-    # #todo do zrobienia
+    # #todo przetestować
     def resolve_for_queen(self, pawn: Pawn):
         return self.get_jump_moves_for_queen(pawn) or self.get_normal_quuen_moves(pawn)
 
-    def get_jump_moves_for_queen(self, pawn: Pawn):
+    #todo przetestować
+    def get_jump_moves_for_queen(self, pawn: Pawn)->list:
         output = []
         for d in DIRECTIONS:
             position = pawn.position
@@ -67,14 +68,30 @@ class Board(CheckersInterface):
                     enemy = self.get_enemy_by_position(position)
                     if enemy:
                         field_after_jump = self.next_field_in_direction(position, d)
-                        if self.has_position(field_after_jump):
-                            vq = self.make_virtual_pawn_on_position(pawn, field_after_jump)
+                        vq = self.make_virtual_pawn_on_position(pawn, field_after_jump)
+                        if self.can_jump_over_enemy(vq, enemy, field_after_jump):
                             output += self.get_jump_moves(vq, [], {'v':[vq.position],'b':[enemy.id]})
+                        break
 
                 position = self.next_field_in_direction(position, d)
 
         return output
 
+    #todo przetestować
+    def get_normal_queen_moves(self, pawn: Pawn)->list:
+        output = []
+        for d in DIRECTIONS:
+            position = pawn.position
+            while self.has_position(position):
+                if position != pawn.position:
+                    if self.get_enemy_by_position(position):
+                        break
+                    else:
+                        output.append(Move(pawn.id, position, []))
+
+                position = self.next_field_in_direction(position, d)
+
+        return output
 
     def get_normal_pawn_moves(self, pawn: Pawn)->list:
         """Get no jumping pawn moves"""
@@ -82,7 +99,7 @@ class Board(CheckersInterface):
         output = []
         for d in [(foreward, 1), (foreward, -1)]:
             next_field = self.next_field_in_direction(pawn.position, d)
-            if self.has_position(next_field) and next_field not in self.get_all_pawns_position_but_one(pawn):
+            if self.has_position(next_field) and next_field not in self.get_all_pawn_positions_but_one(pawn):
                 output.append(
                     Move(pawn.id, next_field)
                 )
@@ -96,7 +113,7 @@ class Board(CheckersInterface):
         for jump in self.generate_jumps(pawn, car['b']):
             has_next = True
 
-            """If recurently came back strip last appended to carrier"""
+            """If recurent came back strip last appended to carrier"""
             if len(car['v']) and pawn.position != car['v'][-1]:
                 car['v'] = car['v'][:-1]
                 car['b'] = car['b'][:-1]
@@ -138,19 +155,19 @@ class Board(CheckersInterface):
         return tuple( x+y for y,x in zip(position, direction))
 
 
-    def can_jump_over_enemy(self,pawn:Pawn, enemy: Pawn, destination: tuple, beated_pawn_ids: list)->bool:
+    def can_jump_over_enemy(self,pawn:Pawn, enemy: Pawn, destination: tuple, beated_pawn_ids: list = [])->bool:
         """Return false if distination out of board """
         if not self.has_position(destination): return False
 
         """Return false if place is busy"""
-        if destination in self.get_all_pawns_position_but_one(pawn): return False
+        if destination in self.get_all_pawn_positions_but_one(pawn): return False
 
         """Return false if enemy was already beated"""
         if enemy.id in beated_pawn_ids: return False
 
         return True
 
-    def get_all_pawns_position_but_one(self, pawn: Pawn):
+    def get_all_pawn_positions_but_one(self, pawn: Pawn):
         return (x.position for x in self.white_pawns + self.black_pawns if pawn.id != x.id)
 
     def has_position(self, position:tuple)->bool:

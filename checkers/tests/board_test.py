@@ -25,14 +25,14 @@ def test_get_pawns():
 
     assert black_pawns != white_pawns
 
-def test_get_all_pawns_but_one(different_pawns_around_white_state):
+def test_get_all_pawns_position_but_one(different_pawns_around_white_state):
     b = Board()
     pawn0 = b.white_pawns[0]
     pawn1 = b.white_pawns[1]
-    for position in b.get_all_pawns_position_but_one(pawn0):
+    for position in b.get_all_pawn_positions_but_one(pawn0):
         assert pawn0.position != position
 
-    for position in b.get_all_pawns_position_but_one(pawn1):
+    for position in b.get_all_pawn_positions_but_one(pawn1):
         assert pawn1.position != position
 
 def test_has_position():
