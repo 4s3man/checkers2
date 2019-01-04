@@ -15,18 +15,16 @@ def choose_game():
 
 @app.route('/game/hotseat', methods=['POST', 'GET'])
 def hot_seat():
-    board = Board(extended_circle_state())
+    board = Board(different_pawns_around_white_state())
     z = board.get_state()
 
     #todo dodać do testów zrobić get_jump_move do końca
-    board.enemy_side = PawnColor('BLACK')
-    gens = board.generate_move_data(board.white_pawns[1], [])
+    board.enemy_side = PawnColor('WHITE')
+    gens = board.get_normal_pawn_moves(board.white_pawns[1])
 
-    # print('[')
-    for move in gens:
-        print(move)
-    #     print(f'Move({move.pawn_id}, {move.visited_fields},{move.beated_pawn_ids})' )
-    # print(']')
+    # for i in range(len(gens)):
+    #     print('assert moves[{i}].position_after_move == {p}\n assert moves[{i}].beated_pawns == {b}'.format(p=gens[i].position_after_move, b=gens[i].beated_pawns, i=i))
+
     session['board_state'] = z.to_json()
 
     return render_template('games/hot_seat.jinja2')

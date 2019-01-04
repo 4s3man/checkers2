@@ -55,6 +55,27 @@ def extended_circle_state():
     })
 
 @pytest.fixture
+def extended_circle_state_no_eleven():
+    return makeState({
+        "white_pawns":
+            [
+            {"id":1, "position": (5,3), "color": "WHITE", "type": "NORMAL"},
+            {"id":2, "position": (1,5), "color": "WHITE", "type": "NORMAL"},
+            {"id":3, "position": (6,0), "color": "WHITE", "type": "NORMAL"},
+            {"id":4, "position": (0,2), "color": "WHITE", "type": "NORMAL"},
+            ],
+        "black_pawns":
+            [
+            {"id":5, "position":( 2, 2), "color": "BLACK", "type": "NORMAL"},
+            {"id":6, "position":( 4, 2), "color": "BLACK", "type": "NORMAL"},
+            {"id":7, "position":( 4, 4), "color": "BLACK", "type": "NORMAL"},
+            {"id":8, "position":( 2, 4), "color": "BLACK", "type": "NORMAL"},
+            {"id":9, "position":( 6, 6), "color": "BLACK", "type": "NORMAL"},
+            {"id":10, "position":( 1, 1), "color": "BLACK", "type": "NORMAL"},
+            ]
+    })
+
+@pytest.fixture
 def for_queen_state():
     return makeState({
         "white_pawns":

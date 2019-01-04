@@ -54,40 +54,56 @@ class Board(CheckersInterface):
     def resolve_for_pawn(self, pawn: Pawn, enemies: list):
         return self.get_jump_moves(pawn) or self.get_normal_pawn_moves(pawn)
 
-    #todo zmienić nazwę zrobić testy czy zwraca zawsze maxymalne ruchy?
-    def generate_move_data(self, pawn, moves, beated=[], last_position=(), id=1):
+    def get_normal_pawn_moves(self, pawn: Pawn)->list:
+        """Get no jumping pawn moves"""
+        foreward = -1 if pawn in self.white_pawns else 1
+        output = []
+        for d in [(foreward, 1), (foreward, -1)]:
+            next_field = self.next_field_in_direction(pawn.position, d)
+            if next_field not in self.get_all_pawns_position_but_one(pawn):
+                output.append(
+                    Move(pawn.id, next_field)
+                )
 
-        has_nex_move = False
-        jumps = self.get_beating_jumps(pawn, beated)
-        for jump in jumps:
-            has_nex_move = True
-            beated.append(jump[1])
+        return output
 
+    def get_jump_moves(self, pawn:Pawn, moves:list, car={})->list:
+        car = {'v':[],'b':[]} if not car else deepcopy(car)
+        has_next = False
+        for jump in self.generate_jumps(pawn, car['b']):
+            has_next = True
+
+            """If recurently came back strip last appended to carrier"""
+            if len(car['v']) and pawn.position != car['v'][-1]:
+                car['v'] = car['v'][:-1]
+                car['b'] = car['b'][:-1]
+
+            car['v'].append(jump[0])
+            car['b'].append(jump[1])
 
             v1 = deepcopy(pawn)
             v1.position = jump[0]
 
-            self.generate_move_data(v1, moves, beated, pawn.position)
+            self.get_jump_moves(v1, moves, car)
 
-        if not has_nex_move:
-                moves.append(Move(pawn.id, pawn.position, beated))
+        if not has_next:
+            """I dont want moves beating same pawns here"""
+            if set(car['b']) != set(y for move in moves for y in move.beated_pawns):
+                moves.append(Move(pawn.id, pawn.position, car['b']))
         return moves
 
-    #todo zmienić nazwę zrobić testy
-    def get_beating_jumps(self, pawn: Pawn, beated_pawn_ids: list=[])->iter:
+    def generate_jumps(self, pawn: Pawn, beated_pawn_ids: list=[])->iter:
         """Returns tuple of position after jump and beated pawn id if can jump in direction"""
-        jumps = []
         for d in DIRECTIONS:
             for enemy in self.get_pawns(self.enemy_side):
                 next_field = self.next_field_in_direction(pawn.position, d)
                 if next_field == enemy.position:
                     field_after_jump = self.next_field_in_direction(next_field, d)
                     if self.can_jump_over_enemy(pawn, enemy, field_after_jump, beated_pawn_ids):
-                        jumps.append((
+                        yield (
                                 self.next_field_in_direction(next_field, d),
                                 enemy.id
-                        ))
-        return jumps
+                        )
 
     def next_field_in_direction(self, position: tuple, direction: tuple)->tuple:
         """Returns field nexto to position in direction"""
@@ -99,28 +115,21 @@ class Board(CheckersInterface):
         if not self.has_position(destination): return False
 
         """Return false if place is busy"""
-        if destination in (pawn.position for pawn in self.get_all_pawns_but_one(pawn)): return False
+        if destination in self.get_all_pawns_position_but_one(pawn): return False
 
         """Return false if enemy was already beated"""
         if enemy.id in beated_pawn_ids: return False
 
         return True
 
-    #todo tu tez powinien być generator
-    def get_all_pawns_but_one(self, pawn: Pawn):
-        """zwraca listę wszystkich pionków oprócz podanego"""
-        return list(filter(lambda p: pawn.id != p.id, self.white_pawns + self.black_pawns))
+    def get_all_pawns_position_but_one(self, pawn: Pawn):
+        return (x.position for x in self.white_pawns + self.black_pawns if pawn.id != x.id)
 
 
     def has_position(self, position: tuple)->bool:
-        """sprawdza czy board posiada daną pozycję"""
         for d in position:
             if d < 0 or d > self.board_size-1: return False
         return True
-
-    # todo do zrobienia
-    def get_normal_pawn_moves(self, pawn: Pawn)->list:
-        return []
 
     #todo do zrobienia
     def resolve_for_queen(self, pawn: Pawn):

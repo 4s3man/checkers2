@@ -29,9 +29,11 @@ def test_get_all_pawns_but_one(different_pawns_around_white_state):
     b = Board()
     pawn0 = b.white_pawns[0]
     pawn1 = b.white_pawns[1]
+    for position in b.get_all_pawns_position_but_one(pawn0):
+        assert pawn0.position != position
 
-    assert pawn0.id not in b.get_all_pawns_but_one(b.white_pawns[0])
-    assert pawn1.id not in b.get_all_pawns_but_one(b.white_pawns[1])
+    for position in b.get_all_pawns_position_but_one(pawn1):
+        assert pawn1.position != position
 
 def test_has_position():
     b = Board()
@@ -56,34 +58,94 @@ def test_next_field_in_direction():
     assert (6,4) == b.next_field_in_direction((5,3), (1,1))
 
 
-def test_get_beating_jumps(different_pawns_around_white_state, extended_circle_state):
+def test_generate_jumps(different_pawns_around_white_state, extended_circle_state):
     b = Board(different_pawns_around_white_state)
     b.enemy_side = PawnColor('BLACK')
-    gen1 = b.get_beating_jumps(b.white_pawns[0], [])
+    gen1 = b.generate_jumps(b.white_pawns[0], [])
     for t in gen1:
         assert t == ((1,1), 3)
 
     b.enemy_side = PawnColor('WHITE')
-    gen2 = b.get_beating_jumps(b.black_pawns[1], [])
+    gen2 = b.generate_jumps(b.black_pawns[1], [])
     for t in gen2:
         assert t == ()
 
     b1 = Board(extended_circle_state)
     b1.enemy_side = PawnColor('BLACK')
-    gen3 = b1.get_beating_jumps(b1.white_pawns[0], [])
+    gen3 = b1.generate_jumps(b1.white_pawns[0], [])
     for t in gen3:
         assert t in [((7, 5), 11), ((3,5), 7), ((3,1),6) ]
 
-    gen4 = b1.get_beating_jumps(b1.white_pawns[0], [7])
+    gen4 = b1.generate_jumps(b1.white_pawns[0], [7])
     for t in gen4:
         assert t in [((7, 5), 11), ((3,1),6) ]
 
-    gen5 = b1.get_beating_jumps(b1.white_pawns[3], [])
+    gen5 = b1.generate_jumps(b1.white_pawns[3], [])
     for t in gen5:
         assert t == ((2,0), 10)
 
     b1 = Board(extended_circle_state)
     b1.enemy_side = PawnColor('BLACK')
-    gen6 = b1.get_beating_jumps(b1.white_pawns[1], [])
+    gen6 = b1.generate_jumps(b1.white_pawns[1], [])
     for t in gen6:
         assert t in [((3,3),8)]
+
+def test_get_jump_moves(extended_circle_state, extended_circle_state_no_eleven, different_pawns_around_white_state):
+    board = Board(extended_circle_state)
+    board.enemy_side = PawnColor('BLACK')
+    moves = board.get_jump_moves(board.white_pawns[1], [])
+
+    assert moves[0].position_after_move == (7,7)
+    assert moves[0].beated_pawns== [8, 7, 9]
+
+    assert moves[1].position_after_move == (7, 3)
+    assert moves[1].beated_pawns == [8, 7, 11]
+
+    assert moves[2].position_after_move == (5,1)
+    assert moves[2].beated_pawns == [8, 6]
+
+    assert moves[2].position_after_move != (7, 1)
+    assert moves[2].beated_pawns != [6]
+
+    assert len(moves) == 3
+
+    moves = board.get_jump_moves(board.white_pawns[0], [])
+    assert moves[0].position_after_move == (5, 7)
+    assert moves[0].beated_pawns == [11, 9]
+
+    assert moves[1].position_after_move == (5, 7)
+    assert moves[1].beated_pawns == [7, 8, 5, 6, 11, 9]
+
+    assert len(moves) == 2
+
+    board = Board(different_pawns_around_white_state)
+    board.enemy_side = PawnColor('BLACK')
+    moves = board.get_jump_moves(board.white_pawns[0], [])
+    assert moves[0].position_after_move == (1, 1)
+    assert moves[0].beated_pawns == [3]
+
+    assert len(moves) == 1
+
+    board = Board(different_pawns_around_white_state)
+    board.enemy_side = PawnColor('WHITE')
+    moves = board.get_jump_moves(board.black_pawns[0], [])
+    assert moves[0].position_after_move == (4, 4)
+    assert moves[0].beated_pawns == [1]
+
+def test_get_normal_pawn_moves(different_pawns_around_white_state):
+    b = Board(different_pawns_around_white_state)
+
+    for move in b.get_normal_pawn_moves(b.white_pawns[0]):
+        assert False
+    else:
+        assert True
+
+    moves = b.get_normal_pawn_moves(b.black_pawns[0])
+    for move in moves:
+        assert move.position_after_move == (3,1)
+    assert len(moves) == 1
+
+    moves = b.get_normal_pawn_moves(b.white_pawns[1])
+    assert moves[0].position_after_move == (1, 5)
+    assert moves[1].position_after_move == (1, 3)
+    assert len(moves) == 2
