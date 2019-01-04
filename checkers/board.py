@@ -2,7 +2,7 @@ from checkers.state import *
 from checkers.global_constants import DIRECTIONS
 from checkers.exceptions import *
 from checkers.move import Move
-from checkers.vec import Vec
+from checkers.jump import Jump
 from checkers.checkers_interface import CheckersInterface
 from copy import deepcopy
 
@@ -55,29 +55,23 @@ class Board(CheckersInterface):
         return self.get_jump_moves(pawn) or self.get_normal_pawn_moves(pawn)
 
     #todo zmienić nazwę zrobić testy czy zwraca zawsze maxymalne ruchy?
-    def generate_move_data(self, pawn, moves, car={}):
-        car = {'v':[],'b':[]} if not car else deepcopy(car)
-        for jump in self.get_beating_jumps(pawn, car['b']):
-            if len(car['v']) and pawn.position != car['v'][-1]:
-                car['v'] = car['v'][:-1]
-                car['b'] = car['b'][:-1]
+    def generate_move_data(self, pawn, moves, beated=[], last_position=(), id=1):
 
-            car['v'].append(jump[0])
-            car['b'].append(jump[1])
+        has_nex_move = False
+        jumps = self.get_beating_jumps(pawn, beated)
+        for jump in jumps:
+            has_nex_move = True
+            beated.append(jump[1])
+
 
             v1 = deepcopy(pawn)
             v1.position = jump[0]
 
-            self.generate_move_data(v1, moves, car)
-        else:
-            s = set(car['v'])
-            all = set()
-            for jump in moves: all.update(jump.visited_fields)
-            p = all >= s
-            if (len(moves) == 0 or not p) and len(car['v']) != 0:
-                moves.append(Move(pawn.id, car['v'], car['b']))
+            self.generate_move_data(v1, moves, beated, pawn.position)
 
-            return moves
+        if not has_nex_move:
+                moves.append(Move(pawn.id, pawn.position, beated))
+        return moves
 
     #todo zmienić nazwę zrobić testy
     def get_beating_jumps(self, pawn: Pawn, beated_pawn_ids: list=[])->iter:
@@ -89,7 +83,10 @@ class Board(CheckersInterface):
                 if next_field == enemy.position:
                     field_after_jump = self.next_field_in_direction(next_field, d)
                     if self.can_jump_over_enemy(pawn, enemy, field_after_jump, beated_pawn_ids):
-                        jumps.append(((self.next_field_in_direction(next_field, d), enemy.id)))
+                        jumps.append((
+                                self.next_field_in_direction(next_field, d),
+                                enemy.id
+                        ))
         return jumps
 
     def next_field_in_direction(self, position: tuple, direction: tuple)->tuple:

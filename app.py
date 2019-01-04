@@ -20,13 +20,13 @@ def hot_seat():
 
     #todo dodać do testów zrobić get_jump_move do końca
     board.enemy_side = PawnColor('BLACK')
-    gens = board.generate_move_data(board.white_pawns[0], [])
+    gens = board.generate_move_data(board.white_pawns[1], [])
 
-    print('[')
+    # print('[')
     for move in gens:
-        print(move.__dict__)
-        print(f'Move({move.pawn_id}, {move.visited_fields},{move.beated_pawn_ids})' )
-    print(']')
+        print(move)
+    #     print(f'Move({move.pawn_id}, {move.visited_fields},{move.beated_pawn_ids})' )
+    # print(']')
     session['board_state'] = z.to_json()
 
     return render_template('games/hot_seat.jinja2')
