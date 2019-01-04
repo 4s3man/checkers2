@@ -132,7 +132,7 @@ def test_get_jump_moves(extended_circle_state, extended_circle_state_no_eleven, 
     assert moves[0].position_after_move == (4, 4)
     assert moves[0].beated_pawns == [1]
 
-def test_get_normal_pawn_moves(different_pawns_around_white_state):
+def test_get_normal_pawn_moves(different_pawns_around_white_state, extended_circle_state):
     b = Board(different_pawns_around_white_state)
 
     for move in b.get_normal_pawn_moves(b.white_pawns[0]):
@@ -149,3 +149,8 @@ def test_get_normal_pawn_moves(different_pawns_around_white_state):
     assert moves[0].position_after_move == (1, 5)
     assert moves[1].position_after_move == (1, 3)
     assert len(moves) == 2
+
+    b1 = Board(extended_circle_state)
+    moves = b1.get_normal_pawn_moves(b1.white_pawns[2])
+    assert len(moves) == 1
+    assert moves[0].position_after_move == (5, 1)

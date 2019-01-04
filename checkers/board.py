@@ -13,10 +13,10 @@ class Board(CheckersInterface):
 
     white_pawns = []
     black_pawns = []
-    enemies = None
+    enemy_side = None
 
     def __init__(self, state: State = None):
-        self.enemies = None
+        self.enemy_side = None
         if state is None:
             self.initial_state()
         else:
@@ -44,7 +44,7 @@ class Board(CheckersInterface):
 
     def resolve_moves(self, side: PawnColor)->list:
         moves = []
-        self.enemies = side.opposite()
+        self.enemy_side = side.opposite()
         for pawn in self.get_pawns(side):
             if pawn.type == 'NORMAL':
                 moves += self.resolve_for_pawn(pawn)
@@ -54,20 +54,43 @@ class Board(CheckersInterface):
     def resolve_for_pawn(self, pawn: Pawn, enemies: list):
         return self.get_jump_moves(pawn) or self.get_normal_pawn_moves(pawn)
 
+    # #todo do zrobienia
+    def resolve_for_queen(self, pawn: Pawn):
+        return self.get_jump_moves_for_queen(pawn) or self.get_normal_quuen_moves(pawn)
+
+    def get_jump_moves_for_queen(self, pawn: Pawn):
+        output = []
+        for d in DIRECTIONS:
+            position = pawn.position
+            while self.has_position(position):
+                if position != pawn.position:
+                    enemy = self.get_enemy_by_position(position)
+                    if enemy:
+                        field_after_jump = self.next_field_in_direction(position, d)
+                        if self.has_position(field_after_jump):
+                            vq = self.make_virtual_pawn_on_position(pawn, field_after_jump)
+                            output += self.get_jump_moves(vq, [], {'v':[vq.position],'b':[enemy.id]})
+
+                position = self.next_field_in_direction(position, d)
+
+        return output
+
+
     def get_normal_pawn_moves(self, pawn: Pawn)->list:
         """Get no jumping pawn moves"""
         foreward = -1 if pawn in self.white_pawns else 1
         output = []
         for d in [(foreward, 1), (foreward, -1)]:
             next_field = self.next_field_in_direction(pawn.position, d)
-            if next_field not in self.get_all_pawns_position_but_one(pawn):
+            if self.has_position(next_field) and next_field not in self.get_all_pawns_position_but_one(pawn):
                 output.append(
                     Move(pawn.id, next_field)
                 )
 
         return output
 
-    def get_jump_moves(self, pawn:Pawn, moves:list, car={})->list:
+    def get_jump_moves(self, pawn: Pawn, moves: list, car={})->list:
+        """Gets list of Move objects as argument"""
         car = {'v':[],'b':[]} if not car else deepcopy(car)
         has_next = False
         for jump in self.generate_jumps(pawn, car['b']):
@@ -81,8 +104,7 @@ class Board(CheckersInterface):
             car['v'].append(jump[0])
             car['b'].append(jump[1])
 
-            v1 = deepcopy(pawn)
-            v1.position = jump[0]
+            v1 = self.make_virtual_pawn_on_position(pawn, jump[0])
 
             self.get_jump_moves(v1, moves, car)
 
@@ -91,6 +113,12 @@ class Board(CheckersInterface):
             if set(car['b']) != set(y for move in moves for y in move.beated_pawns):
                 moves.append(Move(pawn.id, pawn.position, car['b']))
         return moves
+
+    def make_virtual_pawn_on_position(self, pawn: Pawn, position: tuple)->Pawn:
+        v1 = deepcopy(pawn)
+        v1.position = position
+
+        return v1
 
     def generate_jumps(self, pawn: Pawn, beated_pawn_ids: list=[])->iter:
         """Returns tuple of position after jump and beated pawn id if can jump in direction"""
@@ -125,15 +153,14 @@ class Board(CheckersInterface):
     def get_all_pawns_position_but_one(self, pawn: Pawn):
         return (x.position for x in self.white_pawns + self.black_pawns if pawn.id != x.id)
 
-
-    def has_position(self, position: tuple)->bool:
+    def has_position(self, position:tuple)->bool:
         for d in position:
             if d < 0 or d > self.board_size-1: return False
         return True
 
-    #todo do zrobienia
-    def resolve_for_queen(self, pawn: Pawn):
-        return []
-
     def get_pawns(self, side: PawnColor):
         return self.white_pawns if side.name == 'WHITE' else self.black_pawns
+
+    def get_enemy_by_position(self, position: tuple)->Pawn or None:
+        enemy = (x for x in self.get_pawns(self.enemy_side) if x.position == position)
+        return next(enemy, None)

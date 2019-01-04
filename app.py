@@ -15,12 +15,13 @@ def choose_game():
 
 @app.route('/game/hotseat', methods=['POST', 'GET'])
 def hot_seat():
-    board = Board(different_pawns_around_white_state())
+    board = Board(queen_extended_circle_state())
     z = board.get_state()
 
     #todo dodać do testów zrobić get_jump_move do końca
-    board.enemy_side = PawnColor('WHITE')
-    gens = board.get_normal_pawn_moves(board.white_pawns[1])
+    board.enemy_side = PawnColor('BLACK')
+    v = board.get_jump_moves_for_queen(board.white_pawns[0])
+    v
 
     # for i in range(len(gens)):
     #     print('assert moves[{i}].position_after_move == {p}\n assert moves[{i}].beated_pawns == {b}'.format(p=gens[i].position_after_move, b=gens[i].beated_pawns, i=i))
