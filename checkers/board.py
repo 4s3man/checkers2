@@ -42,6 +42,7 @@ class Board(CheckersInterface):
     def get_state(self):
         return State(self.white_pawns, self.black_pawns)
 
+    #todo przetestować
     def resolve_moves(self, side: PawnColor)->list:
         moves = []
         self.enemy_side = side.opposite()
@@ -51,13 +52,15 @@ class Board(CheckersInterface):
             else:
                 moves += self.resolve_for_queen(pawn)
 
-    # todo dodać striper
-    def resolve_for_pawn(self, pawn: Pawn, enemies: list):
-        return self.get_jump_moves(pawn) or self.get_normal_pawn_moves(pawn)
+        return self.leave_only_most_beating_moves(moves)
 
-    #todo dodać striper
+    def resolve_for_pawn(self, pawn: Pawn):
+        return self.leave_only_most_beating_moves(
+            self.get_jump_moves(pawn, []) or self.get_normal_pawn_moves(pawn))
+
     def resolve_for_queen(self, pawn: Pawn):
-        return self.get_jump_moves_for_queen(pawn) or self.get_normal_queen_moves(pawn)
+        return self.leave_only_most_beating_moves(
+            self.get_jump_moves_for_queen(pawn)) or self.get_normal_queen_moves(pawn)
 
     def get_jump_moves_for_queen(self, pawn: Pawn)->list:
         output = []
@@ -131,6 +134,7 @@ class Board(CheckersInterface):
         return moves
 
     def make_virtual_pawn_on_position(self, pawn: Pawn, position: tuple)->Pawn:
+        """Make pawn which is not in state and sets its position"""
         v1 = deepcopy(pawn)
         v1.position = position
 
@@ -180,3 +184,17 @@ class Board(CheckersInterface):
     def get_enemy_by_position(self, position: tuple)->Pawn or None:
         enemy = (x for x in self.get_pawns(self.enemy_side) if x.position == position)
         return next(enemy, None)
+
+    def leave_only_most_beating_moves(self, moves: list)->list:
+        """Returns list of moves which has longest beated_pawn_ids"""
+        if len(moves):
+            max_beated_pawns = self.get_max_beated_number(moves)
+            return [move for move in moves if len(move.beated_pawns) == max_beated_pawns]
+        else:
+            return moves
+
+    def get_max_beated_number(self, moves: list)->int:
+        if len(moves):
+            return len(max(moves, key=lambda x: len(x.beated_pawns)).beated_pawns)
+        else:
+            return 0

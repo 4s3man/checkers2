@@ -189,6 +189,13 @@ def test_get_jump_moves_for_queen___queen_extended_circle_state(queen_extended_c
     assert moves[0].position_after_move == (5, 3)
     assert moves[0].beated_pawns == [7, 8, 5, 6]
 
+    moves = board.get_jump_moves_for_queen(board.white_pawns[1])
+    assert moves[0].position_after_move == (1, 3)
+    assert moves[0].beated_pawns == [8, 7, 6, 5]
+
+    moves = board.get_jump_moves_for_queen(board.white_pawns[2])
+    assert moves[0].position_after_move == (1, 3)
+    assert moves[0].beated_pawns == [5, 6, 7, 8]
 
 def test_get_normal_queen_moves(for_queen_normal_moves_state):
     board = Board(for_queen_normal_moves_state)
@@ -228,3 +235,166 @@ def test_get_normal_queen_moves(for_queen_normal_moves_state):
 
     assert moves[10].position_after_move == (2, 0)
     assert moves[10].beated_pawns == []
+
+def test_get_max_beated_number(extended_circle_state):
+    board = Board(extended_circle_state)
+
+    board.enemy_side = PawnColor('BLACK')
+    num = board.get_max_beated_number(board.get_jump_moves(board.white_pawns[1], []))
+    assert num == 3
+
+def test_leave_most_beating_moves_only(extended_circle_state):
+    board = Board(extended_circle_state)
+
+    board.enemy_side = PawnColor('BLACK')
+    moves = board.leave_only_most_beating_moves(
+        board.get_jump_moves(board.white_pawns[1], [])
+    )
+
+    assert moves[0].position_after_move == (7, 7)
+    assert moves[0].beated_pawns == [8, 7, 9]
+    assert moves[1].position_after_move == (7, 3)
+    assert moves[1].beated_pawns == [8, 7, 11]
+
+def test_resolve_for_pawn___extended_circle_state(extended_circle_state):
+    board = Board(extended_circle_state)
+
+    board.enemy_side = PawnColor('BLACK')
+    moves = board.resolve_for_pawn(board.white_pawns[1])
+
+    assert moves[0].position_after_move == (7, 7)
+    assert moves[0].beated_pawns == [8, 7, 9]
+    assert moves[1].position_after_move == (7, 3)
+    assert moves[1].beated_pawns == [8, 7, 11]
+
+    moves = board.resolve_for_pawn(board.white_pawns[0])
+    assert moves[0].position_after_move == (5, 7)
+    assert moves[0].beated_pawns == [7, 8, 5, 6, 11, 9]
+
+def test_resolve_moves_for_pawn___different_pawns_around_white(different_pawns_around_white_state):
+    board = Board(different_pawns_around_white_state)
+
+    board.enemy_side = PawnColor('BLACK')
+    moves = board.resolve_for_pawn(board.white_pawns[0])
+
+    assert moves[0].position_after_move == (1, 1)
+    assert moves[0].beated_pawns == [3]
+
+    board.enemy_side = PawnColor('WHITE')
+    moves = board.resolve_for_pawn(board.black_pawns[1])
+    
+    assert moves[0].position_after_move == (5, 3)
+    assert moves[0].beated_pawns == []
+
+
+def test_resolve_moves___initial_state():
+    board = Board()
+    moves = board.resolve_moves(PawnColor('WHITE'))
+    assert moves[0].pawn_id == 2
+    assert moves[0].position_after_move == (4, 2)
+    assert moves[0].beated_pawns == []
+
+    assert moves[1].pawn_id == 2
+    assert moves[1].position_after_move == (4, 0)
+    assert moves[1].beated_pawns == []
+
+    assert moves[2].pawn_id == 5
+    assert moves[2].position_after_move == (4, 4)
+    assert moves[2].beated_pawns == []
+
+    assert moves[3].pawn_id == 5
+    assert moves[3].position_after_move == (4, 2)
+    assert moves[3].beated_pawns == []
+
+    assert moves[4].pawn_id == 8
+    assert moves[4].position_after_move == (4, 6)
+    assert moves[4].beated_pawns == []
+
+    assert moves[5].pawn_id == 8
+    assert moves[5].position_after_move == (4, 4)
+    assert moves[5].beated_pawns == []
+
+    assert moves[6].pawn_id == 11
+    assert moves[6].position_after_move == (4, 6)
+    assert moves[6].beated_pawns == []
+
+    moves = board.resolve_moves(PawnColor('BLACK'))
+
+    assert moves[0].pawn_id == 1
+    assert moves[0].position_after_move == (3, 1)
+    assert moves[0].beated_pawns == []
+
+    assert moves[1].pawn_id == 4
+    assert moves[1].position_after_move == (3, 3)
+    assert moves[1].beated_pawns == []
+
+    assert moves[2].pawn_id == 4
+    assert moves[2].position_after_move == (3, 1)
+    assert moves[2].beated_pawns == []
+
+    assert moves[3].pawn_id == 7
+    assert moves[3].position_after_move == (3, 5)
+    assert moves[3].beated_pawns == []
+
+    assert moves[4].pawn_id == 7
+    assert moves[4].position_after_move == (3, 3)
+    assert moves[4].beated_pawns == []
+
+    assert moves[5].pawn_id == 10
+    assert moves[5].position_after_move == (3, 7)
+    assert moves[5].beated_pawns == []
+
+    assert moves[6].pawn_id == 10
+    assert moves[6].position_after_move == (3, 5)
+    assert moves[6].beated_pawns == []
+
+def resolve_moves___no_blocked_beating_move_bug(no_blocked_beating_move_bug):
+    board = Board(no_blocked_beating_move_bug())
+    moves = board.resolve_moves(PawnColor('WHITE'))
+    assert moves[0].pawn_id == 1
+    assert moves[0].position_after_move == (0, 2)
+    assert moves[0].beated_pawns == [1, 0, 4]
+
+def resolve_moves__extended_circle_state(extended_circle_state):
+    board = Board(extended_circle_state)
+    moves = board.resolve_moves(PawnColor('BLACK'))
+    assert moves[0].pawn_id == 7
+    assert moves[0].position_after_move == (6, 2)
+    assert moves[0].beated_pawns == [1]
+    assert moves[1].pawn_id == 8
+    assert moves[1].position_after_move == (0, 6)
+    assert moves[1].beated_pawns == [2]
+
+def resolve_moves__queen_pawns_blocking_state(for_queen_blocking_pawns_state):
+    board = Board(for_queen_blocking_pawns_state())
+    moves = board.resolve_moves(PawnColor('BLACK'))
+    assert moves[0].pawn_id == 2
+    assert moves[0].position_after_move == (5, 3)
+    assert moves[0].beated_pawns == [1]
+
+    moves = board.resolve_moves(PawnColor('WHITE'))
+    assert moves[0].pawn_id == 1
+    assert moves[0].position_after_move == (5, 7)
+    assert moves[0].beated_pawns == [4, 5]
+
+    assert moves[1].pawn_id == 1
+    assert moves[1].position_after_move == (0, 2)
+    assert moves[1].beated_pawns == [2, 6]
+
+def resolve_moevs__queen_extended_circle():
+    board = Board(for_queen_blocking_pawns_state())
+    moves = board.resolve_moves(PawnColor('WHITE'))
+    assert moves[0].pawn_id == 1
+    assert moves[0].position_after_move == (5, 3)
+    assert moves[0].beated_pawns == [7, 8, 5, 6]
+    assert moves[1].pawn_id == 2
+    assert moves[1].position_after_move == (1, 3)
+    assert moves[1].beated_pawns == [8, 7, 6, 5]
+    assert moves[2].pawn_id == 3
+    assert moves[2].position_after_move == (1, 3)
+    assert moves[2].beated_pawns == [5, 6, 7, 8]
+    assert moves[3].pawn_id == 4
+    assert moves[3].position_after_move == (3, 5)
+    assert moves[3].beated_pawns == [7, 6, 5, 8]
+
+    moves = board.resolve_moves(PawnColor('BLACK'))
