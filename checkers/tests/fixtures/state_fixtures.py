@@ -202,7 +202,7 @@ def black_win_state():
             ]
     })
 @pytest.fixture
-def WHITE_win_state():
+def white_win_state():
     return makeState({
         "white_pawns":
             [
@@ -242,7 +242,7 @@ def flower_state():
             {"position":( 4, 4), "color": "BLACK", "type": "NORMAL",  "id": 1},
             {"position": (2, 2), "color": "BLACK", "type": "NORMAL", "id": 2},
             {"position": (4, 2), "color": "BLACK", "type": "NORMAL", "id": 3},
-            {"position": (2, 4), "color": "BLACK", "type": "NORMAL", "id": 3},
+            {"position": (2, 4), "color": "BLACK", "type": "NORMAL", "id": 4},
 
             ]
     })

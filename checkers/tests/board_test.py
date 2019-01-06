@@ -90,7 +90,7 @@ def test_generate_jumps(different_pawns_around_white_state, extended_circle_stat
     for t in gen6:
         assert t in [((3,3),8)]
 
-def test_get_jump_moves(extended_circle_state, extended_circle_state_no_eleven, different_pawns_around_white_state):
+def test_get_jump_moves(extended_circle_state, different_pawns_around_white_state, flower_state):
     board = Board(extended_circle_state)
     board.enemy_side = PawnColor('BLACK')
     moves = board.get_jump_moves(board.white_pawns[1], [])
@@ -132,6 +132,19 @@ def test_get_jump_moves(extended_circle_state, extended_circle_state_no_eleven, 
     assert moves[0].position_after_move == (4, 4)
     assert moves[0].beated_pawns == [1]
 
+    board = Board(flower_state)
+    board.enemy_side = PawnColor('BLACK')
+    moves = board.get_jump_moves(board.white_pawns[0], [])
+
+    assert moves[0].position_after_move == (5, 5)
+    assert moves[0].beated_pawns == [1]
+    assert moves[1].position_after_move == (5, 1)
+    assert moves[1].beated_pawns == [3]
+    assert moves[2].position_after_move == (1, 5)
+    assert moves[2].beated_pawns == [4]
+    assert moves[3].position_after_move == (1, 1)
+    assert moves[3].beated_pawns == [2]
+
 def test_get_normal_pawn_moves(different_pawns_around_white_state, extended_circle_state):
     b = Board(different_pawns_around_white_state)
 
@@ -150,7 +163,68 @@ def test_get_normal_pawn_moves(different_pawns_around_white_state, extended_circ
     assert moves[1].position_after_move == (1, 3)
     assert len(moves) == 2
 
+
+def test_get_normal_pawn_moves__extended_circle(extended_circle_state):
     b1 = Board(extended_circle_state)
     moves = b1.get_normal_pawn_moves(b1.white_pawns[2])
     assert len(moves) == 1
     assert moves[0].position_after_move == (5, 1)
+
+def test_get_jump_moves_for_queen___for_queen_blocking_pawns_state(for_queen_blocking_pawns_state):
+    board = Board(for_queen_blocking_pawns_state)
+    board.enemy_side = PawnColor('BLACK')
+    moves = board.get_jump_moves_for_queen(board.white_pawns[0])
+    assert moves[0].position_after_move == (5,7)
+    assert moves[0].beated_pawns == [4,5]
+
+    assert moves[1].position_after_move == (0, 2)
+    assert moves[1].beated_pawns == [2, 6]
+
+
+def test_get_jump_moves_for_queen___queen_extended_circle_state(queen_extended_circle_state):
+    board = Board(queen_extended_circle_state)
+    board.enemy_side = PawnColor('BLACK')
+    moves = board.get_jump_moves_for_queen(board.white_pawns[0])
+
+    assert moves[0].position_after_move == (5, 3)
+    assert moves[0].beated_pawns == [7, 8, 5, 6]
+
+
+def test_get_normal_queen_moves(for_queen_normal_moves_state):
+    board = Board(for_queen_normal_moves_state)
+
+    board.enemy_side = PawnColor('BLACK')
+    moves = board.resolve_for_queen(board.white_pawns[0])
+
+    assert moves[0].position_after_move == (5, 3)
+    assert moves[0].beated_pawns == []
+
+    assert moves[1].position_after_move == (6, 4)
+    assert moves[1].beated_pawns == []
+
+    assert moves[2].position_after_move == (7, 5)
+    assert moves[2].beated_pawns == []
+
+    assert moves[3].position_after_move == (5, 1)
+    assert moves[3].beated_pawns == []
+
+    assert moves[4].position_after_move == (6, 0)
+    assert moves[4].beated_pawns == []
+
+    assert moves[5].position_after_move == (3, 3)
+    assert moves[5].beated_pawns == []
+
+    assert moves[6].position_after_move == (2, 4)
+    assert moves[6].beated_pawns == []
+
+    assert moves[7].position_after_move == (1, 5)
+    assert moves[7].beated_pawns == []
+
+    assert moves[8].position_after_move == (0, 6)
+    assert moves[8].beated_pawns == []
+
+    assert moves[9].position_after_move == (3, 1)
+    assert moves[9].beated_pawns == []
+
+    assert moves[10].position_after_move == (2, 0)
+    assert moves[10].beated_pawns == []

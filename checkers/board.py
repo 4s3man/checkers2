@@ -51,14 +51,14 @@ class Board(CheckersInterface):
             else:
                 moves += self.resolve_for_queen(pawn)
 
+    # todo dodać striper
     def resolve_for_pawn(self, pawn: Pawn, enemies: list):
         return self.get_jump_moves(pawn) or self.get_normal_pawn_moves(pawn)
 
-    # #todo przetestować
+    #todo dodać striper
     def resolve_for_queen(self, pawn: Pawn):
-        return self.get_jump_moves_for_queen(pawn) or self.get_normal_quuen_moves(pawn)
+        return self.get_jump_moves_for_queen(pawn) or self.get_normal_queen_moves(pawn)
 
-    #todo przetestować
     def get_jump_moves_for_queen(self, pawn: Pawn)->list:
         output = []
         for d in DIRECTIONS:
@@ -77,7 +77,6 @@ class Board(CheckersInterface):
 
         return output
 
-    #todo przetestować
     def get_normal_queen_moves(self, pawn: Pawn)->list:
         output = []
         for d in DIRECTIONS:
