@@ -290,6 +290,7 @@ def test_resolve_moves_for_pawn___different_pawns_around_white(different_pawns_a
 def test_resolve_moves___initial_state():
     board = Board()
     moves = board.resolve_moves(PawnColor('WHITE'))
+    assert moves[0].id == 1
     assert moves[0].pawn_id == 2
     assert moves[0].position_after_move == (4, 2)
     assert moves[0].beated_pawns == []
@@ -320,6 +321,7 @@ def test_resolve_moves___initial_state():
 
     moves = board.resolve_moves(PawnColor('BLACK'))
 
+    assert moves[0].id == 1
     assert moves[0].pawn_id == 1
     assert moves[0].position_after_move == (3, 1)
     assert moves[0].beated_pawns == []
@@ -358,6 +360,7 @@ def resolve_moves___no_blocked_beating_move_bug(no_blocked_beating_move_bug):
 def resolve_moves__extended_circle_state(extended_circle_state):
     board = Board(extended_circle_state)
     moves = board.resolve_moves(PawnColor('BLACK'))
+    assert moves[0].id == 1
     assert moves[0].pawn_id == 7
     assert moves[0].position_after_move == (6, 2)
     assert moves[0].beated_pawns == [1]
@@ -371,15 +374,18 @@ def resolve_moves__queen_pawns_blocking_state(for_queen_blocking_pawns_state):
     assert moves[0].pawn_id == 2
     assert moves[0].position_after_move == (5, 3)
     assert moves[0].beated_pawns == [1]
+    assert moves[0].id == 1
 
     moves = board.resolve_moves(PawnColor('WHITE'))
     assert moves[0].pawn_id == 1
     assert moves[0].position_after_move == (5, 7)
     assert moves[0].beated_pawns == [4, 5]
+    assert moves[0].id == 2
 
     assert moves[1].pawn_id == 1
     assert moves[1].position_after_move == (0, 2)
     assert moves[1].beated_pawns == [2, 6]
+    assert moves[0].id == 3
 
 def resolve_moevs__queen_extended_circle():
     board = Board(for_queen_blocking_pawns_state())

@@ -1,6 +1,4 @@
 from checkers.abstract_game_object import GameObj
-from itertools import count
-
 
 class Move(GameObj):
     id = 0
@@ -13,4 +11,5 @@ class Move(GameObj):
         self.position_after_move = position_after_move
         self.beated_pawns = beated_pawns
 
-
+    def set_id(self, id: int):
+        self.id = id

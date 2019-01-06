@@ -19,10 +19,10 @@ def hot_seat():
 
     #todo dodać do testów zrobić get_jump_move do końca
     moves = board.resolve_moves(PawnColor('BLACK'))
-
+    print(moves)
     z = board.get_state()
-    for i in range(len(moves)):
-        print('assert moves[{i}].pawn_id == {pawn_id}\n assert moves[{i}].position_after_move == {p}\n assert moves[{i}].beated_pawns == {b}'.format(p=moves[i].position_after_move, b=moves[i].beated_pawns, i=i, pawn_id = moves[i].pawn_id))
+    # for i in range(len(moves)):
+    #     print('assert moves[{i}].pawn_id == {pawn_id}\n assert moves[{i}].position_after_move == {p}\n assert moves[{i}].beated_pawns == {b}'.format(p=moves[i].position_after_move, b=moves[i].beated_pawns, i=i, pawn_id = moves[i].pawn_id))
 
     session['board_state'] = z.to_json()
 

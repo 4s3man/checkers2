@@ -1,8 +1,6 @@
 from checkers.state import *
 from checkers.global_constants import DIRECTIONS
-from checkers.exceptions import *
 from checkers.move import Move
-from checkers.jump import Jump
 from checkers.checkers_interface import CheckersInterface
 from copy import deepcopy
 
@@ -39,11 +37,12 @@ class Board(CheckersInterface):
         board_side = range(self.board_size//2 - 1) if color.name == 'BLACK' else range(self.board_size-1, self.board_size // 2, -1)
         return ((y, x) for x in range(self.board_size) for y in board_side if (y%2==0 and x%2==0) or (y%2==1 and x%2==1))
 
-    def get_state(self):
+    def get_state(self)->State:
+        """Returns State Object from current board"""
         return State(self.white_pawns, self.black_pawns)
 
-    #todo przetestować
     def resolve_moves(self, side: PawnColor)->list:
+        """Returns list of moves beating the greatest amount of pawns"""
         moves = []
         self.enemy_side = side.opposite()
         for pawn in self.get_pawns(side):
@@ -52,7 +51,10 @@ class Board(CheckersInterface):
             else:
                 moves += self.resolve_for_queen(pawn)
 
-        return self.leave_only_most_beating_moves(moves)
+        moves = self.leave_only_most_beating_moves(moves)
+        moves = self.set_moves_id(moves)
+
+        return moves
 
     def resolve_for_pawn(self, pawn: Pawn):
         return self.leave_only_most_beating_moves(
@@ -198,3 +200,13 @@ class Board(CheckersInterface):
             return len(max(moves, key=lambda x: len(x.beated_pawns)).beated_pawns)
         else:
             return 0
+
+    def set_moves_id(self, moves: list)->list:
+        if moves:
+            for move, id in zip(moves, range(1,len(moves))):
+                move.set_id(id)
+        else:
+            return []
+
+        return moves
+
