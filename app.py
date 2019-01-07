@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, session, url_for, redirect
-from service.checkers_service import ChecersService
+from service.checkers_service import *
 
 
 from checkers.board import *
@@ -15,22 +15,15 @@ def choose_game():
 
 @app.route('/game/hotseat', methods=['POST', 'GET'])
 def hot_seat():
-    board = Board(queen_extended_circle_state())
-
-    #todo dodać do testów zrobić get_jump_move do końca
-    moves = board.resolve_moves(PawnColor('BLACK'))
-    print(moves)
-    z = board.get_state()
-    # for i in range(len(moves)):
-    #     print('assert moves[{i}].pawn_id == {pawn_id}\n assert moves[{i}].position_after_move == {p}\n assert moves[{i}].beated_pawns == {b}'.format(p=moves[i].position_after_move, b=moves[i].beated_pawns, i=i, pawn_id = moves[i].pawn_id))
-
-    session['board_state'] = z.to_json()
+    ChecersService.init_game(session, GameMode('HOT_SEATS'))
+    print(session)
 
     return render_template('games/hot_seat.jinja2')
 
 @app.route('/move', methods=['POST'])
 def move():
-    return session['board_state']
+    response = ChecersService.create_response_from_session(session, GameMode('HOT_SEATS'))
+    return response
 
 if __name__ == '__main__':
     app.run()

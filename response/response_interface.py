@@ -5,5 +5,5 @@ class ResponseInterface():
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def toJson(self):raise NotImplementedError
+    def to_json(self):raise NotImplementedError
 

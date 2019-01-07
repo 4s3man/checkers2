@@ -14,14 +14,14 @@ class State(GameObj, JsonSerializableInterface):
         return json.dumps(self, default=(lambda x: x.__dict__))
 
     @classmethod
-    def from_json(self, json_string: str):
+    def from_json(cls, json_string: str):
         state_dict = json.loads(json_string)
-        white_pawns = self.convert_pawn(State, PawnColor('WHITE'), state_dict['white_pawns'])
-        black_pawns = self.convert_pawn(State, PawnColor('BLACK'), state_dict['black_pawns'])
+        white_pawns = cls.convert_pawn(State, PawnColor('WHITE'), state_dict['white_pawns'])
+        black_pawns = cls.convert_pawn(State, PawnColor('BLACK'), state_dict['black_pawns'])
 
-        return self(white_pawns, black_pawns)
+        return cls(white_pawns, black_pawns)
 
-    def convert_pawn(self, color: PawnColor, pawn_data: dict):
+    def convert_pawn(cls, color: PawnColor, pawn_data: dict):
         convert_pawn = (lambda p, c=color: Pawn(p['id'], tuple(p['position']), color, PawnType(p['type'])))
         return list(map(
             convert_pawn,
