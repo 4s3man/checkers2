@@ -28,33 +28,34 @@ export function fetchBoardState(url, payload={}){
 }
 
 function normalizeData(data){
-  console.log(data);
-  let pawns = data['white_pawns'].concat(data['black_pawns']);
   let statePart = {fields:{}, pawns:{}, moves:{}, winner:''};
+  let pawns = data['state']['white_pawns'].concat(data['state']['black_pawns']);
+  let moves = data.moves ? data.moves : [];
 
-  if(data['winner'] != undefined)statePart.winner = data['winner'];
-
-  for (var i=0, moveId = 1; i<pawns.length; i++){
-    if(!pawns[i])continue;
-    let fieldKey = pawns[i].position[0] + ' ' + pawns[i].position[1];
-    let pawnId = i+1;
-
-    let moves = pawns[i].moves != undefined ? pawns[i].moves : [];
-    let pawnMovesId = [];
-    for (let m = 0; m < moves.length; m++) {
-      pawnMovesId.push(moveId);
-      statePart.moves[moveId] = moves[m];
-      moveId++;
-    }
-    pawns[i].moves = pawnMovesId;
-
-    statePart.pawns[pawnId] = pawns[i];
-    delete pawns[i].x
-    delete pawns[i].y
-    statePart.fields[fieldKey] = {'pawn':pawnId, 'fieldKey':fieldKey, 'moves':pawns[i].moves};
+  pawns = make_id_keyed_object(pawns);
+  for(let id in pawns){
+    let pawn = pawns[id];
+    let pawn_moves = moves.filter(move => move.pawn_id.toString() === id).map(move => move.id);
+    let fieldKey = pawn.position.join(' ')
+    let field = {"pawn":id, "fieldKey":fieldKey, "moves":pawn_moves}
+    statePart.fields[fieldKey] = field;
   }
+  moves = make_id_keyed_object(moves);
+
+  statePart.moves = moves
+  statePart.pawns = pawns
 
   return statePart;
+}
+
+function make_id_keyed_object(arr){
+  let dono = {}
+  for (let i=0; i<arr.length; i++){
+    let id = arr[i].id
+    dono[id] = arr[i]
+    // delete dono[id].id
+  }
+  return dono;
 }
 
 export function stateFetchSuccess(data){

@@ -40,22 +40,23 @@ class Checkers extends Component{
     if (!field) return FilerField(color, id);
     let pawn = this.props.pawns[field.pawn] || null;
 
-    // if(field.funcs && !this.props.winner){
-    //   let fieldFunc = null;
-    //   let pawn = this.props.pawns[field.pawn]
-    //   switch (field.funcs) {
-    //     case 'deselectPawn':
-    //       fieldFunc = () => this.props.deselectPawn();
-    //       break;
-    //     case 'fetchBoardState':
-    //       fieldFunc = () => this.props.fetchBoardState('/move', this.props.moveDataTmp[fieldKey]);
-    //       break;
-    //     default:
-    //       fieldFunc = () => this.props.selectPawn({'fieldKey':fieldKey, 'moves':pawn.moves});
-    //   }
-    //   return ClickableField(color, id, field, fieldFunc, pawn);
-    // }
-    // else
+    if(field.funcs && !this.props.winner){
+      let fieldFunc = null;
+      let pawn = this.props.pawns[field.pawn]
+      switch (field.funcs) {
+        case 'deselectPawn':
+          fieldFunc = () => this.props.deselectPawn();
+          break;
+        case 'fetchBoardState':
+          fieldFunc = () => this.props.fetchBoardState('/move', this.props.moveDataTmp[fieldKey]);
+          break;
+        default:
+          let moveIds = this.props.fields[fieldKey].moves;
+          fieldFunc = () => this.props.selectPawn({'fieldKey':fieldKey, 'moves':moveIds});
+      }
+      return ClickableField(color, id, field, fieldFunc, pawn);
+    }
+    else
       return FilerField(color, id, pawn);
   }
 

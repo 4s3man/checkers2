@@ -19,7 +19,7 @@ class ChecersService():
             suffix = cls.get_suffix(mode)
 
             board = Board()
-            moves = board.resolve_moves(PawnColor('WHITE'))
+            moves = board.resolve_moves(PawnColor('BLACK'))
 
             session['BOARD_STATE' + suffix] = board.get_state().to_json()
             session['TURN' + suffix] = 'white'
@@ -48,13 +48,20 @@ class ChecersService():
         return json.dumps(moves, default=(lambda x: x.__dict__))
 
     @classmethod
-    def handle_move(cls, session:session, move:list)->Response:
-        return
+    def handle_move(cls, session:session, mode: GameMode)->Response:
+        suffix = ChecersService.get_suffix(mode)
+        board = Board(
+            State.from_json(session['BOARD_STATE' + suffix])
+        )
+
+        moves = board.resolve_moves(PawnColor('white'))
+        return ''
 
     @classmethod
     def create_response_from_session(cls,session: session, mode: GameMode):
         suffix = cls.get_suffix(mode)
         return Response.concat_json_response_elements(
             session['BOARD_STATE' + suffix],
-            session['MOVES' + suffix]
+            session['MOVES' + suffix],
+            '',
         )

@@ -22,8 +22,9 @@ def hot_seat():
 
 @app.route('/move', methods=['POST'])
 def move():
-    response = ChecersService.create_response_from_session(session, GameMode('HOT_SEATS'))
-    return response
+    s = ChecersService.create_response_from_session(session, GameMode('HOT_SEATS'))
+    print(s)
+    return s
 
 if __name__ == '__main__':
     app.run()

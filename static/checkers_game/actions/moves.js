@@ -55,6 +55,7 @@ function normalizePayloadMoves(state, payloadSrc){
   let payload = Object.assign({}, payloadSrc);
   let beatedPawnColor = state.pawns[state.fields[payload['fieldKey']].pawn].color === 'white' ?
     'black' : 'white';
+  console.log(payload)
   let movesIds = payload['moves'];
   let moves = movesIds.map((id)=>state.moves[id]);
 

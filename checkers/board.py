@@ -24,14 +24,16 @@ class Board(CheckersInterface):
     def initial_state(self):
         gen_black_places = self.make_places_gen(PawnColor('BLACK'))
         gen_white_places = self.make_places_gen(PawnColor('WHITE'))
-
-        for pawn_id in range(self.pawns_for_site):
+        pawn_id = 1
+        for i in range(self.pawns_for_site):
             self.white_pawns.append(
                 Pawn(pawn_id, next(gen_white_places), PawnColor('WHITE'), PawnType('NORMAL'))
             )
+            pawn_id += 1
             self.black_pawns.append(
                 Pawn(pawn_id, next(gen_black_places), PawnColor('BLACK'), PawnType('NORMAL'))
             )
+            pawn_id+=1
 
     def make_places_gen(self, color:PawnColor)->iter:
         board_side = range(self.board_size//2 - 1) if color.name == 'BLACK' else range(self.board_size-1, self.board_size // 2, -1)
